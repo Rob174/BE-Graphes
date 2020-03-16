@@ -1,0 +1,6 @@
+@startuml
+class GraphTest {
+    static void initAll()
+    void testTranspose()
+}
+@enduml

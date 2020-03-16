@@ -1,6 +1,97 @@
 @startuml
-class GraphTest {
-    static void initAll()
-    void testTranspose()
+interface Arc {
+    ____
+    Arc()
+    ____
+    {abstract} **Node** 	getDestination() 	 
+    {abstract} **float** 	getLength() 	 
+    **double** 	getMinimumTravelTime() 
+    {abstract} **Node** 	getOrigin() 	 
+    {abstract} **List<Point>** 	getPoints() 	 
+    {abstract} **RoadInformation** 	getRoadInformation() 	 
+    **double** 	getTravelTime​(double speed)
 }
+class Graph {
+    ____
+    Graph​(String mapId, String mapName, List<Node> nodes, GraphStatistics graphStatistics)
+    ____
+    **Node** get(int id)
+    **GraphStatistics** 	getGraphInformation() 	 
+    **String** 	getMapId() 	 
+    **String** 	getMapName() 	 
+    **List<Node>** 	getNodes() 	 
+    **int** 	size() 	 
+    **String** 	toString() 	 
+    **Graph** 	transpose()
+    __ private final __
+    **String** mapId
+    **String** mapName
+    **List<Node>** nodes
+    **GraphStatistics** graphStatistics
+}
+class Path {
+    ____
+    Path​(Graph graph) 	
+    Path​(Graph graph, List<Arc> arcs) 	
+    Path​(Graph graph, Node node)
+    ____
+    **List<Arc>** 	getArcs() 	 
+    **Node** 	getDestination() 	 
+    **Graph** 	getGraph() 	 
+    **float** 	getLength() Need to be implemented.
+    **double** 	getMinimumTravelTime() Need to be implemented.
+    **Node** 	getOrigin() 	 
+    **double** 	getTravelTime​(double speed) Need to be implemented.
+    **boolean** 	isEmpty() 	
+    **boolean** 	isValid()Need to be implemented.
+    **int** 	size()
+    __ A implémenter __
+    {static} **Path** 	concatenate​(Path... paths) 	
+    {static} **Path** 	createFastestPathFromNodes​(Graph graph, List<Node> nodes) 
+    {static} **Path** 	createShortestPathFromNodes​(Graph graph, List<Node> nodes) 
+    __ private final __
+    **Graph** graph
+    **Node** origin
+    **List<Arc>** arcs
+}
+class RoadInformation {
+    ____
+    RoadInformation​(RoadInformation.RoadType roadType, AccessRestrictions access, boolean isOneWay, int maxSpeed, String name)
+    ____
+    **AccessRestrictions** 	getAccessRestrictions() 	 
+    **int** 	getMaximumSpeed() 	 
+    **String** 	getName() 	 
+    **RoadInformation**.RoadType getType() 	 
+    **boolean** 	isOneWay() 	 
+    **String** 	toString()
+    __private final__
+    **RoadType** type
+    **AccessRestrictions** access
+    **boolean** oneway
+    **int** maxSpeed
+    **String** name
+}
+class Node {
+    ____
+    Node​(int id, Point point)
+    ____
+    **int** 	compareTo​(Node other) 	
+    **boolean** 	equals​(java.lang.Object other) 	 
+    **int** 	getId() 	 
+    **int** 	getNumberOfSuccessors() 	 
+    **Point** 	getPoint() 	 
+    **List<Arc>** 	getSuccessors() 	 
+    **boolean** 	hasSuccessors() 	 
+    {static} **Arc** 	linkNodes​(Node origin, Node destination, float length, RoadInformation roadInformation, java.util.ArrayList<Point> points)
+    __private final__
+    **int** id
+    **Point** point
+    **ArrayList<Arc>** successors
+}
+Arc "*" <---> "1" Node
+Arc ---> "1" RoadInformation
+Graph ---> "*" Node
+Path ---> "1" Graph
+Path ---> "*" Node
+Path ---> "*" Arc
 @enduml

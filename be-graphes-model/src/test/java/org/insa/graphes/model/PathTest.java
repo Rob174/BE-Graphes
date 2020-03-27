@@ -191,12 +191,20 @@ public class PathTest {
         }
 
         // Trap construction!
+        System.out.println("Deb");
+        try {
         path = Path.createFastestPathFromNodes(graph, Arrays.asList(new Node[] { nodes[1] }));
+	    }
+	    catch (Exception e){System.out.println("Erreur non attendue 15");}
         assertEquals(nodes[1], path.getOrigin());
         assertEquals(0, path.getArcs().size());
 
         // Trap construction - The return!
+        try {
         path = Path.createFastestPathFromNodes(graph, Arrays.asList(new Node[0]));
+        }
+        catch (Exception e){System.out.println("Erreur non attendue 16");}
+        
         assertEquals(null, path.getOrigin());
         assertEquals(0, path.getArcs().size());
         assertTrue(path.isEmpty());

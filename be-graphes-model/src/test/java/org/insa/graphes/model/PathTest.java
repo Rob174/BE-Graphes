@@ -7,16 +7,17 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.insa.graphs.model.Arc;
 import org.insa.graphs.model.Graph;
+import org.insa.graphs.model.IllegalArgumentException;
 import org.insa.graphs.model.Node;
 import org.insa.graphs.model.Path;
 import org.insa.graphs.model.RoadInformation;
 import org.insa.graphs.model.RoadInformation.RoadType;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 public class PathTest {
 
     // Small graph use for tests
@@ -162,12 +163,15 @@ public class PathTest {
 
     @Test
     public void testCreateFastestPathFromNodes() {
-        Path path;
+        Path path = null;
         Arc[] expected;
 
         // Simple construction
+        try {
         path = Path.createFastestPathFromNodes(graph,
                 Arrays.asList(new Node[] { nodes[0], nodes[1], nodes[2] }));
+        }
+        catch (Exception e){System.out.println("Erreur non attendue 1");}
         expected = new Arc[] { a2b, b2c };
         assertEquals(expected.length, path.getArcs().size());
         for (int i = 0; i < expected.length; ++i) {
@@ -175,8 +179,11 @@ public class PathTest {
         }
 
         // Not so simple construction
+        try {
         path = Path.createFastestPathFromNodes(graph,
                 Arrays.asList(new Node[] { nodes[0], nodes[1], nodes[2], nodes[3] }));
+        }
+        catch (Exception e){System.out.println("Erreur non attendue 2");}
         expected = new Arc[] { a2b, b2c, c2d_3 };
         assertEquals(expected.length, path.getArcs().size());
         for (int i = 0; i < expected.length; ++i) {
@@ -197,12 +204,17 @@ public class PathTest {
 
     @Test
     public void testCreateShortestPathFromNodes() {
-        Path path;
+        Path path = null;
         Arc[] expected;
 
         // Simple construction
+        try {
+        	List<Node> n = Arrays.asList(new Node[] { nodes[0], nodes[1], nodes[2] });
         path = Path.createShortestPathFromNodes(graph,
-                Arrays.asList(new Node[] { nodes[0], nodes[1], nodes[2] }));
+                n);
+    	System.out.println("Pour "+n.size()+" noeuds "+path.getArcs().size()+" arcs");
+        }
+        catch (Exception e){System.out.println("Erreur non attendue 3");}
         expected = new Arc[] { a2b, b2c };
         assertEquals(expected.length, path.getArcs().size());
         for (int i = 0; i < expected.length; ++i) {
@@ -210,8 +222,11 @@ public class PathTest {
         }
 
         // Not so simple construction
+        try {
         path = Path.createShortestPathFromNodes(graph,
                 Arrays.asList(new Node[] { nodes[0], nodes[1], nodes[2], nodes[3] }));
+        }
+        catch (Exception e){System.out.println("Erreur non attendue 4");}
         expected = new Arc[] { a2b, b2c, c2d_2 };
         assertEquals(expected.length, path.getArcs().size());
         for (int i = 0; i < expected.length; ++i) {
@@ -219,25 +234,33 @@ public class PathTest {
         }
 
         // Trap construction!
+        try {
         path = Path.createShortestPathFromNodes(graph, Arrays.asList(new Node[] { nodes[1] }));
+        }
+        catch (Exception e){System.out.println("Erreur non attendue 5");}
         assertEquals(nodes[1], path.getOrigin());
         assertEquals(0, path.getArcs().size());
 
         // Trap construction - The return!
+        try {
         path = Path.createShortestPathFromNodes(graph, Arrays.asList(new Node[0]));
+        }
+        catch (Exception e){System.out.println("Erreur non attendue 6");}
         assertEquals(null, path.getOrigin());
         assertEquals(0, path.getArcs().size());
         assertTrue(path.isEmpty());
     }
-
+    
     @Test(expected = IllegalArgumentException.class)
-    public void testCreateFastestPathFromNodesException() {
+    public void testCreateFastestPathFromNodesException() throws IllegalArgumentException {//Normalement pas besoin du throws en junit 4.12 ....
         Path.createFastestPathFromNodes(graph, Arrays.asList(new Node[] { nodes[1], nodes[0] }));
     }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testCreateShortestPathFromNodesException() {
-        Path.createShortestPathFromNodes(graph, Arrays.asList(new Node[] { nodes[1], nodes[0] }));
+    //Dans Project/Properties/Maven dependencies --> chemin vers junit 4.12
+    //Donc normalement eclipse utilise bien tout du moins pour ce projet la version 4.12
+    @Test(expected = IllegalArgumentException.class)    
+    public void testCreateShortestPathFromNodesException() throws IllegalArgumentException {//Normalement pas besoin du throws en junit 4.12 ....
+        Path.createShortestPathFromNodes(graph, Arrays.asList(new Node[] { nodes[1], nodes[0] }));//Affiche bien le texte de l'exception
+        //Si j'ai bien compris, cet appel doit retourner une exception, ce qui est vu mon println (cf IllegalArgumentException.java) le cas
     }
 
 }

@@ -3,7 +3,7 @@ package org.insa.graphs.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
+import IllegalArgumentException;
 /**
  * <p>
  * Class representing a path between nodes in a graph.
@@ -51,13 +51,37 @@ public class Path {
      * @throws IllegalArgumentException If the list of nodes is not valid, i.e. two
      *         consecutive nodes in the list are not connected in the graph.
      * 
-     * @deprecated Need to be implemented.
      */
     public static Path createShortestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
         List<Arc> arcs = new ArrayList<Arc>();
-        // TODO:
-        return new Path(graph, arcs);
+        for (int i = 0; i<nodes.size()-1;i++) {//On parcourt les noeuds
+        	Node node =  nodes.get(i);
+        	Arc bestArc = node.getSuccessors().get(0);
+        	double minTravelTime = 1000000000;//=infini
+        	boolean vuSuivant = false;
+        	for(Arc arc : node.getSuccessors()) {
+        		if (i+1<nodes.size()) {//On a bien un noeud encore après dans notre liste de noeuds ?
+        			if(arc.getDestination().equals(nodes.get(i+1))) {//L'arc du noeud courant le relie bien au noeud suivant ?
+        				vuSuivant = true;//On a bien vu le noeud suivant attendu
+                		if(arc.getMinimumTravelTime()<minTravelTime) {
+                			//On retient l'arc le plus court
+                			minTravelTime = arc.getMinimumTravelTime();
+                			bestArc = arc;
+                		}
+        			}
+        		}
+        	}
+        	if (vuSuivant == false) {
+        		throw new IllegalArgumentException("Index "+i+" et "+String.valueOf(i+1)+" non liés");
+        	}
+        	arcs.add(bestArc);
+        	
+        }
+        System.out.println("Fini !");
+        Path p = new Path(graph, arcs);
+        System.out.println("Longueur : "+p.getArcs().size()+" pour "+nodes.size()+" noeuds");
+        return p;
     }
 
     /**

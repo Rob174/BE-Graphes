@@ -35,20 +35,20 @@ class Path {
     Path​(Graph graph, List<Arc> arcs) 	
     Path​(Graph graph, Node node)
     ____
-    **List<Arc>** 	getArcs() 	 
-    **Node** 	getDestination() 	 
-    **Graph** 	getGraph() 	 
-    **float** 	getLength() Need to be implemented.
-    **double** 	getMinimumTravelTime() Need to be implemented.
-    **Node** 	getOrigin() 	 
-    **double** 	getTravelTime​(double speed) Need to be implemented.
-    **boolean** 	isEmpty() 	
-    **boolean** 	isValid()Need to be implemented.
-    **int** 	size()
+    **List<Arc>** getArcs() 	 
+    **Node** getDestination() 	 
+    **Graph** getGraph() 	 
+    **Node** getOrigin() 
+    **boolean** isEmpty() 
+    **float** getLength()	
+    **double** getMinimumTravelTime()
+    **boolean** isValid()
+    **int** size()
+    {static} **Path** concatenate​(Path... paths) 	
     __ A implémenter __
-    {static} **Path** 	concatenate​(Path... paths) 	
-    {static} **Path** 	createFastestPathFromNodes​(Graph graph, List<Node> nodes) 
-    {static} **Path** 	createShortestPathFromNodes​(Graph graph, List<Node> nodes) 
+    **double** getTravelTime​(double speed)
+    {static} **Path** createFastestPathFromNodes​(Graph graph, List<Node> nodes) 
+    {static} **Path** createShortestPathFromNodes​(Graph graph, List<Node> nodes) 
     __ private final __
     **Graph** graph
     **Node** origin

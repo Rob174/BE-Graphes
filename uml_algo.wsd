@@ -1,0 +1,92 @@
+@startuml
+package "algorithm" {
+    class AbstractAlgorithm<Observer>{
+
+    }
+    together {
+        interface ArcInspector {
+            **double** getCost​(Arc);
+            **int** getMaximumSpeed();
+            **AbstractInputData.Mode** getMode();
+            **boolean** isAllowed​(Arc);
+        }
+        note top of ArcInspector: which arcs can be used\nthe costs of the usable arcs
+        ArcInspector ..> AbstractInputData
+        class AbstractInputData {
+            **AbstractSolution** run();
+            **AbstractInputData** getInputData();
+        }
+    }
+    class AbstractSolution {
+        **AbstractInputData** getInputData();
+        **Duration** getsolvingTime();
+        **AbstractSolution.Status** getStatus();
+        **boolean** isFeasible();
+    }
+    note right: AbstractSolution.Status : \nFEASIBLE ; INFEASIBLE ;\nOPTIMAL ; UNKNOWN
+    
+    AbstractInputData <.. AbstractSolution
+    class AlgorithmFactory {
+        
+    }
+    AlgorithmFactory ..> AbstractInputData
+    AbstractAlgorithm <.. AlgorithmFactory
+    package algorithm.shortestpath {
+        interface ShortestPathObserver {
+            **void** notifyDestinationReached(Node destination);
+            **void** notifyNodeMarked​(Node nodeMarked);
+            **void** notifyNodeReached(Node nodeReached);
+            **void** notifyOriginProcessed(Node origin);
+        }	
+        class AStarAlgorithm {
+            
+        } 
+        together { 
+            class BellmanFordAlgorithm {
+                
+            } 
+            class DijkstraAlgorithm {
+                
+            }
+            class ShortestPathAlgorithm {
+                **ShortestPathData** getInputData()
+                **void** notifyDestinationReached​(Node node)
+                **void** notifyNodeMarked​(Node node)
+                **void** notifyNodeReached​(Node node)
+                **void** notifyOriginProcessed​(Node node)
+                **ShortestPathSolution** run()
+            } 	
+        }
+        AStarAlgorithm --|> DijkstraAlgorithm
+        AStarAlgorithm --> ShortestPathData
+        	 
+        BellmanFordAlgorithm --|> ShortestPathAlgorithm
+        BellmanFordAlgorithm --> ShortestPathData
+         	 
+        DijkstraAlgorithm --|> ShortestPathAlgorithm
+        DijkstraAlgorithm --> ShortestPathData 
+        ShortestPathAlgorithm --|> AbstractAlgorithm
+        ShortestPathAlgorithm --> ShortestPathObserver
+        class ShortestPathData {
+            **Node** getDestination()
+            **Node** getOrigin() 	 
+            **String** toString()
+        } 	 
+        ShortestPathData --|> AbstractInputData
+        ArcInspector <-- ShortestPathData
+        class ShortestPathSolution {
+            **ShortestPathData** getInputData()
+            **Path** getPath()
+        } 	 
+        ShortestPathSolution --|> AbstractSolution
+        ShortestPathSolution --> ShortestPathData
+        class ShortestPathTextObserver {
+            **void** notifyDestinationReached​(Node node) 	
+            **void** notifyNodeMarked​(Node node) 	
+            **void** notifyNodeReached​(Node node) 	
+            **void** notifyOriginProcessed​(Node node) 	
+        }
+        ShortestPathTextObserver --|> ShortestPathObserver
+    }
+}
+@enduml

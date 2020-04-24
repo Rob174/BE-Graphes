@@ -67,7 +67,6 @@ public abstract class AbstractInputData {
     public Mode getMode() {
         return this.arcInspector.getMode();
     }
-
     /**
      * Retrieve the maximum speed associated with this input data, or
      * {@link GraphStatistics#NO_MAXIMUM_SPEED} if none is associated. The maximum

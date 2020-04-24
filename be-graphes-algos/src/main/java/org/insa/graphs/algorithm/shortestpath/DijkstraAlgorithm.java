@@ -1,9 +1,14 @@
 package org.insa.graphs.algorithm.shortestpath;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.insa.graphs.model.Arc;
 import org.insa.graphs.model.Graph;
+import org.insa.graphs.model.Path;
+import org.insa.graphs.algorithm.AbstractInputData;
+import org.insa.graphs.algorithm.AbstractSolution.Status;
 import org.insa.graphs.algorithm.shortestpath.Label;
 import org.insa.graphs.algorithm.utils.*;
 
@@ -32,17 +37,21 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     			labels[i] = new Label(graph.getNodes().get(i),false,Double.POSITIVE_INFINITY,null);
         	}
 		}
-
         while (labels[data.getDestination().getId()].estMarque() == false) {
-        	Label x = tas.findMin();
+        	Label x = tas.deleteMin();
         	x.marquer();
+        	
         	for (Arc arc : x.getCurrentNode().getSuccessors()) {
         		Label successeur = labels[arc.getDestination().getId()];
-				if(successeur.estMarque()==false && successeur.getCost() > x.getCost()+arc.getMinimumTravelTime()) {
-					successeur.setCost(Math.min(successeur.getCost(), x.getCost()+arc.getMinimumTravelTime()));
-					if(successeur.getCost() != Double.POSITIVE_INFINITY) {
+        		double precCout = successeur.getCost();
+				if(data.isAllowed(arc)==true && successeur.estMarque()==false && successeur.getCost() > x.getCost()+data.getCost(arc)) {
+		        	
+					successeur.setCost(Math.min(successeur.getCost(), x.getCost()+data.getCost(arc)));
+					successeur.setFather(arc);
+					if(precCout != Double.POSITIVE_INFINITY) {
 						tas.remove(successeur);
 						tas.insert(successeur);
+						
 					}
 					else {
 						tas.insert(successeur);
@@ -50,7 +59,31 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 				}
 			}
         }
-        
+
+        // Destination has no predecessor, the solution is infeasible...
+        if (labels[data.getDestination().getId()] == null) {
+            solution = new ShortestPathSolution(data, Status.INFEASIBLE);
+        }
+        else {
+
+            // The destination has been found, notify the observers.
+            notifyDestinationReached(data.getDestination());
+
+            // Create the path from the array of predecessors...
+            ArrayList<Arc> arcs = new ArrayList<>();
+            Arc arc = labels[data.getDestination().getId()].getFather();
+            while (arc != null) {
+                arcs.add(arc);
+                arc = labels[arc.getOrigin().getId()].getFather();
+            }
+
+            // Reverse the path...
+            Collections.reverse(arcs);
+
+            // Create the final solution.
+            solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, arcs));
+        }
+
         return solution;
     }
 

@@ -40,13 +40,27 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         while (labels[data.getDestination().getId()].estMarque() == false) {
         	Label x = tas.deleteMin();
         	x.marquer();
+        	notifyNodeMarked(x.getCurrentNode());
+        	if(x.getCurrentNode().getId()==data.getOrigin().getId()) {
+                // Notify observers about the first event (origin processed).
+                notifyOriginProcessed(data.getOrigin());
+        	}
         	
         	for (Arc arc : x.getCurrentNode().getSuccessors()) {
         		Label successeur = labels[arc.getDestination().getId()];
         		double precCout = successeur.getCost();
-				if(data.isAllowed(arc)==true && successeur.estMarque()==false && successeur.getCost() > x.getCost()+data.getCost(arc)) {
+
+                // Retrieve weight of the arc.
+                double w = data.getCost(arc);
+                double oldDistance = successeur.getCost();
+                double newDistance = x.getCost()+data.getCost(arc);
+                
+                if (Double.isInfinite(oldDistance) && Double.isFinite(newDistance)) {
+                    notifyNodeReached(arc.getDestination());
+                }
+				if(data.isAllowed(arc)==true && successeur.estMarque()==false &&  oldDistance > newDistance) {
 		        	
-					successeur.setCost(Math.min(successeur.getCost(), x.getCost()+data.getCost(arc)));
+					successeur.setCost(Math.min(oldDistance, newDistance));
 					successeur.setFather(arc);
 					if(precCout != Double.POSITIVE_INFINITY) {
 						tas.remove(successeur);
@@ -58,6 +72,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 					}
 				}
 			}
+        	if(labels[data.getDestination().getId()].estMarque() == true) {
+                notifyNodeReached(x.getFather().getDestination());
+        	}
         }
 
         // Destination has no predecessor, the solution is infeasible...

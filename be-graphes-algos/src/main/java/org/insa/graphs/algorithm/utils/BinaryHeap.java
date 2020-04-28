@@ -1,5 +1,5 @@
 package org.insa.graphs.algorithm.utils;
-
+import org.insa.graphs.algorithm.shortestpath.Label;
 import java.util.ArrayList;
 
 /**
@@ -221,6 +221,35 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
     @Override
     public String toString() {
         return BinaryHeapFormatter.toStringTree(this, 8);
+    }
+    public boolean isValid() {
+    	boolean cbon = true;
+    	int i = 0;
+    	while((i<this.currentSize)&&(cbon!=false)) {
+    		i++;
+    		cbon = cbon && this.verification_element(i);
+        	if(cbon == false) {
+        		System.out.println("Tas non valide");
+        		return false;
+        	}
+		}
+    	System.out.println("Tas valide");
+    	return true;
+    }
+    private boolean verification_element(int index) {
+    	int index_fils_gauche = this.indexLeft(index);
+    	if(index_fils_gauche<this.currentSize) {
+    		if(this.array.get(index_fils_gauche)<this.array.get(index)) {
+    			return false;
+    		}
+    	}
+    	int index_fils_droit = index_fils_droit+1;
+    	if(index_fils_droit<this.currentSize) {
+    		if(this.array.get(index_fils_droit)<this.array.get(index)) {
+    			return false;
+    		}
+    	}
+    	return true;
     }
 
 }

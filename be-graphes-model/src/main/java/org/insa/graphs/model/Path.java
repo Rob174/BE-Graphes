@@ -3,7 +3,7 @@ package org.insa.graphs.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import IllegalArgumentException;
+import org.insa.graphs.model.IllegalArgumentException;
 /**
  * <p>
  * Class representing a path between nodes in a graph.

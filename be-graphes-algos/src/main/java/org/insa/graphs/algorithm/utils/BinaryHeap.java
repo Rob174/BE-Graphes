@@ -1,5 +1,4 @@
 package org.insa.graphs.algorithm.utils;
-import org.insa.graphs.algorithm.shortestpath.Label;
 import java.util.ArrayList;
 
 /**
@@ -239,13 +238,13 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
     private boolean verification_element(int index) {
     	int index_fils_gauche = this.indexLeft(index);
     	if(index_fils_gauche<this.currentSize) {
-    		if(this.array.get(index_fils_gauche)<this.array.get(index)) {
+    		if(this.array.get(index_fils_gauche).compareTo(this.array.get(index))<0) {
     			return false;
     		}
     	}
-    	int index_fils_droit = index_fils_droit+1;
+    	int index_fils_droit = index_fils_gauche+1;
     	if(index_fils_droit<this.currentSize) {
-    		if(this.array.get(index_fils_droit)<this.array.get(index)) {
+    		if(this.array.get(index_fils_droit).compareTo(this.array.get(index))<0) {
     			return false;
     		}
     	}

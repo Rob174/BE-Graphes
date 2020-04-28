@@ -1,17 +1,12 @@
 package org.insa.graphs.algorithm.shortestpath;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-
 import org.insa.graphs.model.Arc;
 import org.insa.graphs.model.Graph;
-import org.insa.graphs.model.IllegalArgumentException;
 import org.insa.graphs.model.Path;
 import org.insa.graphs.model.Node;
-import org.insa.graphs.algorithm.AbstractInputData;
 import org.insa.graphs.algorithm.AbstractSolution.Status;
-import org.insa.graphs.algorithm.shortestpath.Label;
 import org.insa.graphs.algorithm.utils.*;
 
 public class DijkstraAlgorithm extends ShortestPathAlgorithm {
@@ -19,10 +14,12 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     public DijkstraAlgorithm(ShortestPathData data) {
         super(data);
     }
-
+    public Label createLabel(Node sommet_courant, boolean marque, double cout, Arc pere,Node destination) {
+    	return new Label(sommet_courant,marque,cout,pere);
+    }
     @Override
     protected ShortestPathSolution doRun() {
-        final ShortestPathData data = getInputData();
+    	final ShortestPathData data = getInputData();
         Graph graph = data.getGraph();
         ShortestPathSolution solution = null;
         final int nbNodes = graph.size();
@@ -31,7 +28,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         // Initialize array of distances.
         Label[] labels = new Label[nbNodes];
         for (int i = 0; i < nbNodes; i++) {
-    			labels[i] = new Label(graph.getNodes().get(i),false,Double.POSITIVE_INFINITY,null);
+    			labels[i] = this.createLabel(graph.getNodes().get(i),false,Double.POSITIVE_INFINITY,null,data.getDestination());
 		}
         labels[data.getOrigin().getId()].setCost(0);
         tas.insert(labels[data.getOrigin().getId()]);
@@ -39,7 +36,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         while (labels[data.getDestination().getId()].estMarque() == false) {
         	Label x = tas.deleteMin();
         	x.marquer();
-        	System.out.println(x.getCurrentNode().getId()+" marqué avec cout "+x.getCost());
+        	System.out.println(x.getCurrentNode().getId()+" marqué avec cout "+x.getTotalCost());
         	notifyNodeMarked(x.getCurrentNode());
         	try
         	{
@@ -52,19 +49,18 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	}
         	for (Arc arc : x.getCurrentNode().getSuccessors()) {
         		Label successeur = labels[arc.getDestination().getId()];
-        		double precCout = successeur.getCost();
-
-                // Retrieve weight of the arc.
+        		double precCout = successeur.getTotalCost();
+        		
                 double w = data.getCost(arc);
-                double oldDistance = successeur.getCost();
-                double newDistance = x.getCost()+data.getCost(arc);
+                double oldDistance = successeur.getTotalCost();
+                double newDistance = x.getCost()+w+successeur.getCoutEstime();
                 
                 if (Double.isInfinite(oldDistance) && Double.isFinite(newDistance)) {
                     notifyNodeReached(arc.getDestination());
                 }
 				if(data.isAllowed(arc)==true && successeur.estMarque()==false &&  oldDistance > newDistance) {
 		        	
-					successeur.setCost(Math.min(oldDistance, newDistance));
+					successeur.setCost(x.getCost()+w);
 					successeur.setFather(arc);
 					if(precCout != Double.POSITIVE_INFINITY) {
 						tas.remove(successeur);
@@ -122,7 +118,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 			 * System.out.println("Chemin ok"); }
 			 * if(labels[data.getDestination().getId()].get != s_d.getLength()) {
 			 * System.out.println("Le calcul : "+labels[data.getDestination().getId()].
-			 * getCost()+" et th : "+s_d.getLength()); } } catch (IllegalArgumentException
+			 * getTotalCost()+" et th : "+s_d.getLength()); } } catch (IllegalArgumentException
 			 * e) { System.out.println("Erreur"); e.printStackTrace(); }
 			 */
         }

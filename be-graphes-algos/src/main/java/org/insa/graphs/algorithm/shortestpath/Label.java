@@ -4,11 +4,11 @@ import org.insa.graphs.model.Node;
 import org.insa.graphs.model.Arc;
 
 public class Label implements Comparable<Label>{
-    private Node sommet_courant;
-    private boolean marque;
-    private double cout;
-    private Arc pere;
-    private int id;
+	protected Node sommet_courant;
+    protected boolean marque;
+    protected double cout;
+    protected Arc pere;
+    protected int id;
     public Label(Node sommet_courant, boolean marque, double cout, Arc pere){
         this.sommet_courant = sommet_courant;
         this.marque = marque;
@@ -19,12 +19,18 @@ public class Label implements Comparable<Label>{
     public double getCost() {
         return this.cout;
     }
+    public double getTotalCost() {
+    	return this.cout;
+    }
     public void setCost(double cout) {
     	this.cout = cout;
     }
     public boolean estMarque() {
     	return this.marque;
     }
+	public double getCoutEstime() {
+		return 0;
+	}
     public void marquer() {
     	this.marque = true;
     }
@@ -38,10 +44,16 @@ public class Label implements Comparable<Label>{
     	return this.pere;
     }
     public int compareTo(Label otherLabel) {
-    	if(this.cout < otherLabel.getCost())
+    	if(this.getTotalCost() < otherLabel.getTotalCost())
     		return -1;
-    	else if(this.cout > otherLabel.getCost())
+    	else if(this.getTotalCost() > otherLabel.getTotalCost())
     		return 1;
-		return 0;
+    	else {
+    		if(this.getCost()<otherLabel.getCost())
+    			return -1;
+    		else if(this.getCost()>otherLabel.getCost()) 
+    			return 1;
+    		return 0;
+    	}
     }
 }

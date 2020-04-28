@@ -1,5 +1,6 @@
 package org.insa.graphs.algorithm.shortestpath;
 
+
 import java.util.ArrayList;
 import java.util.Collections;
 import org.insa.graphs.model.Arc;
@@ -8,6 +9,7 @@ import org.insa.graphs.model.Path;
 import org.insa.graphs.model.Node;
 import org.insa.graphs.algorithm.AbstractSolution.Status;
 import org.insa.graphs.algorithm.utils.*;
+import org.insa.graphs.algorithm.shortestpath.Fraction;
 
 public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 
@@ -32,11 +34,13 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 		}
         labels[data.getOrigin().getId()].setCost(0);
         tas.insert(labels[data.getOrigin().getId()]);
-        this.notifyOriginProcessed(data.getOrigin());
+		this.notifyOriginProcessed(data.getOrigin());
+		long nb_moyen_parc = 0;
+		Fraction tmp_num = new Fraction((long)0,(long)1);
+		System.out.println("Debut0");
         while (labels[data.getDestination().getId()].estMarque() == false) {
         	Label x = tas.deleteMin();
         	x.marquer();
-        	System.out.println(x.getCurrentNode().getId()+" marqué avec cout "+x.getTotalCost());
         	notifyNodeMarked(x.getCurrentNode());
         	try
         	{
@@ -46,7 +50,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	catch(ElementNotFoundException e)
         	{
         		System.out.println("Cet élément n'existe pas");
-        	}
+			}
+			Fraction moy_crte = new Fraction((long)0,(long)(x.getCurrentNode().getSuccessors().size()));
+			System.out.println("Debut1");
         	for (Arc arc : x.getCurrentNode().getSuccessors()) {
         		Label successeur = labels[arc.getDestination().getId()];
         		double precCout = successeur.getTotalCost();
@@ -56,7 +62,8 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
                 double newDistance = x.getCost()+w+successeur.getCoutEstime();
                 
                 if (Double.isInfinite(oldDistance) && Double.isFinite(newDistance)) {
-                    notifyNodeReached(arc.getDestination());
+					notifyNodeReached(arc.getDestination());
+					moy_crte.incr_num();
                 }
 				if(data.isAllowed(arc)==true && successeur.estMarque()==false &&  oldDistance > newDistance) {
 		        	
@@ -74,11 +81,18 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 					}
 				}
 			}
+        	if(moy_crte.get_denom()!=0)
+			{
+        		System.out.println("taux de prise : "+moy_crte.calcul());
+        		tmp_num.add(moy_crte);
+    		}
         	if(labels[data.getDestination().getId()].estMarque() == true) {
                 notifyNodeReached(x.getFather().getDestination());
-        	}
+			}
+			nb_moyen_parc++;
         }
-
+        double res = tmp_num.calcul()/(double)(nb_moyen_parc);
+		System.out.println("Total en moy "+res+" prct");
         // Destination has no predecessor, the solution is infeasible...
         if (labels[data.getDestination().getId()] == null) {
             solution = new ShortestPathSolution(data, Status.INFEASIBLE);

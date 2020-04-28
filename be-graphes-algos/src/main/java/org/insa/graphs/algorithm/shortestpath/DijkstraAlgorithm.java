@@ -37,7 +37,8 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 		this.notifyOriginProcessed(data.getOrigin());
 		long nb_moyen_parc = 0;
 		Fraction tmp_num = new Fraction((long)0,(long)1);
-		System.out.println("Debut0");
+		long nb_noeuds_tot = data.getGraph().size();
+		long nb = 0;
         while (labels[data.getDestination().getId()].estMarque() == false) {
         	Label x = tas.deleteMin();
         	x.marquer();
@@ -49,10 +50,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	}
         	catch(ElementNotFoundException e)
         	{
-        		System.out.println("Cet élément n'existe pas");
+        		//System.out.println("Cet élément n'existe pas");
 			}
 			Fraction moy_crte = new Fraction((long)0,(long)(x.getCurrentNode().getSuccessors().size()));
-			System.out.println("Debut1");
         	for (Arc arc : x.getCurrentNode().getSuccessors()) {
         		Label successeur = labels[arc.getDestination().getId()];
         		double precCout = successeur.getTotalCost();
@@ -64,6 +64,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
                 if (Double.isInfinite(oldDistance) && Double.isFinite(newDistance)) {
 					notifyNodeReached(arc.getDestination());
 					moy_crte.incr_num();
+					nb++;
                 }
 				if(data.isAllowed(arc)==true && successeur.estMarque()==false &&  oldDistance > newDistance) {
 		        	
@@ -72,18 +73,17 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 					if(precCout != Double.POSITIVE_INFINITY) {
 						tas.remove(successeur);
 						tas.insert(successeur);
-						//tas.isValid();
+						tas.isValid();
 						
 					}
 					else {
 						tas.insert(successeur);
-						//tas.isValid();
+						tas.isValid();
 					}
 				}
 			}
         	if(moy_crte.get_denom()!=0)
 			{
-        		System.out.println("taux de prise : "+moy_crte.calcul());
         		tmp_num.add(moy_crte);
     		}
         	if(labels[data.getDestination().getId()].estMarque() == true) {
@@ -93,6 +93,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         }
         double res = tmp_num.calcul()/(double)(nb_moyen_parc);
 		System.out.println("Total en moy "+res+" prct");
+		System.out.println("Total du total "+((double)(nb)/(double)(nb_noeuds_tot))+" prct");
         // Destination has no predecessor, the solution is infeasible...
         if (labels[data.getDestination().getId()] == null) {
             solution = new ShortestPathSolution(data, Status.INFEASIBLE);

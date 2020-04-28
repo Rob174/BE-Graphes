@@ -232,7 +232,7 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
         		return false;
         	}
 		}
-    	System.out.println("Tas valide");
+    	// System.out.println("Tas valide");
     	return true;
     }
     private boolean verification_element(int index) {

@@ -34,10 +34,10 @@ public class Path {
     public static Path createFastestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
         List<Arc> arcs = new ArrayList<Arc>();
-        for (int i = 0; i<nodes.size()-1;i++) {//On parcourt les noeuds
+        for (int i = 0; i<nodes.size()-1;i++) {//On parcourt les noeuds 2 à la fois
         	Node node =  nodes.get(i);
         	Arc bestArc = node.getSuccessors().get(0);
-        	double min = 1000000000.;//=infini
+        	double min = Double.POSITIVE_INFINITY;
         	boolean vuSuivant = false;
         	for(Arc arc : node.getSuccessors()) {
         		if (i+1<nodes.size()) {//On a bien un noeud encore après dans notre liste de noeuds ?
@@ -52,7 +52,7 @@ public class Path {
         		}
         	}
         	if (vuSuivant == false) {
-        		throw new IllegalArgumentException("Index "+i+" et "+String.valueOf(i+1)+" non liés");
+        		throw new IllegalArgumentException("Index "+nodes.get(i).getId()+" et "+nodes.get(i+1).getId()+" non liés");
         	}
         	arcs.add(bestArc);
         	

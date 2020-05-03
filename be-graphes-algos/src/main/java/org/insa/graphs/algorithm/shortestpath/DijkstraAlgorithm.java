@@ -39,8 +39,18 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 		Fraction tmp_num = new Fraction((long)0,(long)1);
 		long nb_noeuds_tot = data.getGraph().size();
 		long nb = 0;
-        while (labels[data.getDestination().getId()].estMarque() == false) {
-        	Label x = tas.deleteMin();
+		boolean arret = false;
+        while (labels[data.getDestination().getId()].estMarque() == false && arret == false) {
+        	Label x;
+        	try {
+        		x = tas.deleteMin();
+        		System.out.println(x.getCurrentNode().getId());
+        	}
+        	catch(EmptyPriorityQueueException e) {
+        		System.out.println("Pas de chemin possible");
+        		arret = true;
+        		break;
+        	}
         	x.marquer();
         	notifyNodeMarked(x.getCurrentNode());
         	try
@@ -91,15 +101,15 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 			}
 			nb_moyen_parc++;
         }
-        double res = tmp_num.calcul()/(double)(nb_moyen_parc);
-		System.out.println("Total en moy "+res+" prct");
-		System.out.println("Total du total "+((double)(nb)/(double)(nb_noeuds_tot))+" prct");
         // Destination has no predecessor, the solution is infeasible...
-        if (labels[data.getDestination().getId()] == null) {
+        if (labels[data.getDestination().getId()] == null || arret == true) {
             solution = new ShortestPathSolution(data, Status.INFEASIBLE);
         }
         else {
 
+            double res = tmp_num.calcul()/(double)(nb_moyen_parc);
+    		System.out.println("Total en moy "+res+" prct");
+    		System.out.println("Total du total "+((double)(nb)/(double)(nb_noeuds_tot))+" prct");
             // The destination has been found, notify the observers.
             notifyDestinationReached(data.getDestination());
 
@@ -122,20 +132,28 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 
             // Reverse the path...
             Collections.reverse(arcs);
+            Collections.reverse(nodes_path);
 
             // Create the final solution.
             solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, arcs));
-			/*
-			 * Path p = new Path(graph); Path s_d; System.out.println(" "); for(Node n :
-			 * nodes_path) { System.out.println("indice : "+n.getId()); }
-			 * System.out.println(" -*********"); try { s_d =
-			 * Path.createFastestPathFromNodes(graph, nodes_path); if (s_d.isValid()) {
-			 * System.out.println("Chemin ok"); }
-			 * if(labels[data.getDestination().getId()].get != s_d.getLength()) {
-			 * System.out.println("Le calcul : "+labels[data.getDestination().getId()].
-			 * getTotalCost()+" et th : "+s_d.getLength()); } } catch (IllegalArgumentException
-			 * e) { System.out.println("Erreur"); e.printStackTrace(); }
-			 */
+			
+			Path p = new Path(graph); 
+			
+			Path s_d;
+			try { 
+				s_d = Path.createFastestPathFromNodes(graph, nodes_path); 
+				if (s_d.isValid()) {
+					System.out.println("Chemin ok"); 
+					}
+				if(labels[data.getDestination().getId()].getCost() != s_d.getLength()) {
+					System.out.println("Le calcul : "+labels[data.getDestination().getId()].getTotalCost()+" et th : "+s_d.getLength()); 
+					} 
+				} 
+			catch (org.insa.graphs.model.IllegalArgumentException e) 
+			{
+				System.out.println("Erreur"); e.printStackTrace();
+			}
+			
         }
         return solution;
     }

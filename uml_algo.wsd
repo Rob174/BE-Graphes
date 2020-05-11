@@ -57,15 +57,15 @@ package "algorithm" {
                 **ShortestPathSolution** run()
             } 	
         }
-        AStarAlgorithm --|> DijkstraAlgorithm
+        DijkstraAlgorithm <|-- AStarAlgorithm
         AStarAlgorithm --> ShortestPathData
         	 
-        BellmanFordAlgorithm --|> ShortestPathAlgorithm
+        ShortestPathAlgorithm <|-- BellmanFordAlgorithm
         BellmanFordAlgorithm --> ShortestPathData
          	 
-        DijkstraAlgorithm --|> ShortestPathAlgorithm
+        ShortestPathAlgorithm <|-- DijkstraAlgorithm
         DijkstraAlgorithm --> ShortestPathData 
-        ShortestPathAlgorithm --|> AbstractAlgorithm
+        AbstractAlgorithm <|-- ShortestPathAlgorithm
         ShortestPathAlgorithm --> ShortestPathObserver
         class ShortestPathData {
             **Node** getDestination()

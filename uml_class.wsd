@@ -12,86 +12,60 @@ interface Arc {
     **double** 	getTravelTime​(double speed)
 }
 class Graph {
+    __ private final __
+    **- String** mapId
+    **- String** mapName
+    **- List<Node>** nodes
     ____
     Graph​(String mapId, String mapName, List<Node> nodes, GraphStatistics graphStatistics)
     ____
-    **Node** get(int id)
-    **GraphStatistics** 	getGraphInformation() 	 
-    **String** 	getMapId() 	 
-    **String** 	getMapName() 	 
-    **List<Node>** 	getNodes() 	 
-    **int** 	size() 	 
-    **String** 	toString() 	 
-    **Graph** 	transpose()
-    __ private final __
-    **String** mapId
-    **String** mapName
-    **List<Node>** nodes
-    **GraphStatistics** graphStatistics
+    **+ Node** get(int id)
+    **+ List<Node>** 	getNodes() 	 
+    **+ int** 	size() 	 
 }
 class Path {
+    __ private final __
+    **- Graph** graph
+    **- Node** origin
+    **- List<Arc>** arcs
     ____
     Path​(Graph graph) 	
     Path​(Graph graph, List<Arc> arcs) 	
     Path​(Graph graph, Node node)
     ____
-    **List<Arc>** getArcs() 	 
-    **Node** getDestination() 	 
-    **Graph** getGraph() 	 
-    **Node** getOrigin() 
-    **boolean** isEmpty() 
-    **float** getLength()	
-    **double** getMinimumTravelTime()
-    **boolean** isValid()
-    **int** size()
-    {static} **Path** concatenate​(Path... paths) 	
+    **+ List<Arc>** getArcs() 	 
+    **+ Node** getDestination() 	 
+    **+ Graph** getGraph() 	 
+    **+ Node** getOrigin() 
+    **+ boolean** isEmpty() 
+    **+ float** getLength()	
+    **+ double** getMinimumTravelTime()
+    **+ boolean** isValid()
+    **+ int** size()
     __ A implémenter __
-    **double** getTravelTime​(double speed)
-    {static} **Path** createFastestPathFromNodes​(Graph graph, List<Node> nodes) 
-    {static} **Path** createShortestPathFromNodes​(Graph graph, List<Node> nodes) 
-    __ private final __
-    **Graph** graph
-    **Node** origin
-    **List<Arc>** arcs
-}
-class RoadInformation {
-    ____
-    RoadInformation​(RoadInformation.RoadType roadType, AccessRestrictions access, boolean isOneWay, int maxSpeed, String name)
-    ____
-    **AccessRestrictions** 	getAccessRestrictions() 	 
-    **int** 	getMaximumSpeed() 	 
-    **String** 	getName() 	 
-    **RoadInformation**.RoadType getType() 	 
-    **boolean** 	isOneWay() 	 
-    **String** 	toString()
-    __private final__
-    **RoadType** type
-    **AccessRestrictions** access
-    **boolean** oneway
-    **int** maxSpeed
-    **String** name
+    **+ double** getTravelTime​(double speed)
+    {static} **+ Path** createFastestPathFromNodes​(Graph graph, List<Node> nodes) 
+    {static} **+ Path** createShortestPathFromNodes​(Graph graph, List<Node> nodes) 
 }
 class Node {
+    __private final__
+    **- int** id
+    **- Point** point
+    **- ArrayList<Arc>** successors
     ____
     Node​(int id, Point point)
     ____
-    **int** 	compareTo​(Node other) 	
-    **boolean** 	equals​(java.lang.Object other) 	 
-    **int** 	getId() 	 
-    **int** 	getNumberOfSuccessors() 	 
-    **Point** 	getPoint() 	 
-    **List<Arc>** 	getSuccessors() 	 
-    **boolean** 	hasSuccessors() 	 
-    {static} **Arc** 	linkNodes​(Node origin, Node destination, float length, RoadInformation roadInformation, java.util.ArrayList<Point> points)
-    __private final__
-    **int** id
-    **Point** point
-    **ArrayList<Arc>** successors
+    **+ int** 	compareTo​(Node other) 	
+    **+ boolean** 	equals​(java.lang.Object other) 	 
+    **+ int** 	getId() 	 
+    **+ int** 	getNumberOfSuccessors() 	 
+    **+ Point** 	getPoint() 	 
+    **+ List<Arc>** 	getSuccessors() 	 
+    **+ boolean** 	hasSuccessors() 	 
 }
 Arc "*" <---> "1" Node
-Arc ---> "1" RoadInformation
-Graph ---> "*" Node
-Path ---> "1" Graph
-Path ---> "*" Node
-Path ---> "*" Arc
+Graph "1" ---> "*" Node
+Path "*"---> "1" Graph
+Path "*" ---> "*" Node
+Path "*" ---> "*" Arc
 @enduml

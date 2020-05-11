@@ -10,13 +10,13 @@ import org.insa.graphs.model.Node;
 import org.insa.graphs.algorithm.AbstractSolution.Status;
 import org.insa.graphs.algorithm.utils.*;
 import org.insa.graphs.algorithm.shortestpath.Fraction;
-
+import org.insa.graphs.algorithm.AbstractInputData.Mode;
 public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 
     public DijkstraAlgorithm(ShortestPathData data) {
         super(data);
     }
-    public Label createLabel(Node sommet_courant, boolean marque, double cout, Arc pere,Node destination) {
+    public Label createLabel(Node sommet_courant, boolean marque, double cout, double coutEstime, Arc pere,Node destination) {
     	return new Label(sommet_courant,marque,cout,pere);
     }
     @Override
@@ -29,8 +29,27 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         // Initialize array of distances.
         Label[] labels = new Label[nbNodes];
-        for (int i = 0; i < nbNodes; i++) {
-    			labels[i] = this.createLabel(graph.getNodes().get(i),false,Double.POSITIVE_INFINITY,null,data.getDestination());
+    	if(data.getMode() == Mode.LENGTH) {
+    		System.out.println("Mode distance");
+    		for (int i = 0; i < nbNodes; i++) {
+    			labels[i] = this.createLabel(graph.getNodes().get(i),
+    										false,
+    										Double.POSITIVE_INFINITY,
+    										graph.getNodes().get(i).getPoint().distanceTo(data.getDestination().getPoint()),
+    										null,
+    										data.getDestination());
+    		}
+    	}
+    	else {
+    		System.out.println("Mode temps");
+    		for (int i = 0; i < nbNodes; i++) {
+        		labels[i] = this.createLabel(graph.getNodes().get(i),
+						false,
+						Double.POSITIVE_INFINITY,
+						graph.getNodes().get(i).getPoint().distanceTo(data.getDestination().getPoint())/graph.getGraphInformation().getMaximumSpeed(),
+						null,
+						data.getDestination());
+    		}        		
 		}
         labels[data.getOrigin().getId()].setCost(0);
         tas.insert(labels[data.getOrigin().getId()]);
@@ -44,7 +63,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	Label x;
         	try {
         		x = tas.deleteMin();
-        		System.out.println(x.getCurrentNode().getId());
+        		//System.out.println(x.getCurrentNode().getId());
         	}
         	catch(EmptyPriorityQueueException e) {
         		System.out.println("Pas de chemin possible");
@@ -68,8 +87,8 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         		double precCout = successeur.getTotalCost();
         		
                 double w = data.getCost(arc);
-                double oldDistance = successeur.getTotalCost();
-                double newDistance = x.getCost()+w+successeur.getCoutEstime();
+                double oldDistance = successeur.getCost();
+                double newDistance = x.getCost()+w;
                 
                 if (Double.isInfinite(oldDistance) && Double.isFinite(newDistance)) {
 					notifyNodeReached(arc.getDestination());
@@ -83,12 +102,12 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 					if(precCout != Double.POSITIVE_INFINITY) {
 						tas.remove(successeur);
 						tas.insert(successeur);
-						tas.isValid();
+						//tas.isValid();
 						
 					}
 					else {
 						tas.insert(successeur);
-						tas.isValid();
+						//tas.isValid();
 					}
 				}
 			}
@@ -139,16 +158,17 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 			
 			Path p = new Path(graph); 
 			
-			Path s_d;
+			Path s_d,s_t;
 			try { 
-				s_d = Path.createFastestPathFromNodes(graph, nodes_path); 
-				if (s_d.isValid()) {
+				s_t = Path.createFastestPathFromNodes(graph, nodes_path); 
+				s_d = Path.createShortestPathFromNodes(graph, nodes_path); 
+				if (s_d.isValid() && s_t.isValid()) {
 					System.out.println("Chemin ok"); 
-					}
-				if(labels[data.getDestination().getId()].getCost() != s_d.getLength()) {
-					System.out.println("Le calcul : "+labels[data.getDestination().getId()].getTotalCost()+" et th : "+s_d.getLength()); 
-					} 
-				} 
+				}
+
+				System.out.println("Si choix distance : Le calcul : "+labels[data.getDestination().getId()].getCost()+" et th : "+s_d.getLength()); 
+				System.out.println("Si choix temps : Le calcul : "+labels[data.getDestination().getId()].getCost()); 	
+			} 
 			catch (org.insa.graphs.model.IllegalArgumentException e) 
 			{
 				System.out.println("Erreur"); e.printStackTrace();

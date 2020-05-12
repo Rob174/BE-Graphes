@@ -31,8 +31,11 @@ public class Path {
      *         consecutive nodes in the list are not connected in the graph.
      * 
      */
-    public static Path createFastestPathFromNodes(Graph graph, List<Node> nodes)
+    public static Path createFastestPathFromNodes(Graph graph, List<Node> nodes)//On doit forcément fournir des noeuds sinon on ne sait pas d'où peut provenir le problème
             throws IllegalArgumentException {
+        if(nodes.size() == 1){
+            return new Path(graph,nodes.get(0));
+        }
         List<Arc> arcs = new ArrayList<Arc>();
         for (int i = 0; i<nodes.size()-1;i++) {//On parcourt les noeuds 2 à la fois
         	Node node =  nodes.get(i);
@@ -58,13 +61,7 @@ public class Path {
         	
         }
         System.out.println("Fini !");
-        Path p;
-        if(nodes.size()==1) {
-        	p = new Path(graph,nodes.get(0));
-        }
-        else {
-        	p = new Path(graph, arcs);
-        }
+        Path p = new Path(graph, arcs);
         System.out.println("Longueur : "+p.getArcs().size()+" pour "+nodes.size()+" noeuds");
         return p;
     }
@@ -84,6 +81,9 @@ public class Path {
      */
     public static Path createShortestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
+        if(nodes.size() == 1){
+            return new Path(graph,nodes.get(0));
+        }
         List<Arc> arcs = new ArrayList<Arc>();
         for (int i = 0; i<nodes.size()-1;i++) {//On parcourt les noeuds
         	Node node =  nodes.get(i);
@@ -109,13 +109,7 @@ public class Path {
         	
         }
         System.out.println("Fini !");
-        Path p;
-        if(nodes.size()==1) {
-        	p = new Path(graph,nodes.get(0));
-        }
-        else {
-        	p = new Path(graph, arcs);
-        }
+        Path p = new Path(graph, arcs);
         System.out.println("Longueur : "+p.getArcs().size()+" pour "+nodes.size()+" noeuds");
         return p;
     }

@@ -20,8 +20,13 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     	return new Label(sommet_courant,marque,cout,pere);
     }
     @Override
-    protected ShortestPathSolution doRun() {
-    	final ShortestPathData data = getInputData();
+    protected ShortestPathSolution doRun() throws NullPointerException {
+		final ShortestPathData data = getInputData();
+		if(data.getOrigin().equals(null))
+			throw new NullPointerException("Il manque l'origine du trajet");
+		if(data.getDestination().equals(null))
+			throw new NullPointerException("Il manque la destination du trajet");
+		
         Graph graph = data.getGraph();
         ShortestPathSolution solution = null;
         final int nbNodes = graph.size();
@@ -121,7 +126,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 			nb_moyen_parc++;
         }
         // Destination has no predecessor, the solution is infeasible...
-        if (labels[data.getDestination().getId()] == null || arret == true) {
+        if (labels[data.getDestination().getId()].getFather() == null || arret == true) {
             solution = new ShortestPathSolution(data, Status.INFEASIBLE);
         }
         else {
@@ -132,17 +137,16 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
             // The destination has been found, notify the observers.
             notifyDestinationReached(data.getDestination());
 
-            // Create the path from the array of predecessors...
+			// Create the path from the array of predecessors...
+			if(data.getOrigin().getId()==data.getDestination().getId())
+				return new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, data.getOrigin()));
             ArrayList<Arc> arcs = new ArrayList<>();
             Arc arc = labels[data.getDestination().getId()].getFather();
-            ArrayList<Node>  nodes_path = new ArrayList<Node>();
-            System.out.println("********/////");
+			ArrayList<Node>  nodes_path = new ArrayList<Node>();
+			nodes_path.add(data.getOrigin());
             while (arc != null) {
             	if(nodes_path.contains(arc.getDestination())==false) {
             		nodes_path.add(arc.getDestination());
-            	}
-            	if(nodes_path.contains(arc.getOrigin())==false) {
-            		nodes_path.add(arc.getOrigin());
             	}
             	
                 arcs.add(arc);
@@ -154,26 +158,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
             Collections.reverse(nodes_path);
 
             // Create the final solution.
-            solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, arcs));
-			
-			Path p = new Path(graph); 
-			
-			Path s_d,s_t;
-			try { 
-				s_t = Path.createFastestPathFromNodes(graph, nodes_path); 
-				s_d = Path.createShortestPathFromNodes(graph, nodes_path); 
-				if (s_d.isValid() && s_t.isValid()) {
-					System.out.println("Chemin ok"); 
-				}
-
-				System.out.println("Si choix distance : Le calcul : "+labels[data.getDestination().getId()].getCost()+" et th : "+s_d.getLength()); 
-				System.out.println("Si choix temps : Le calcul : "+labels[data.getDestination().getId()].getCost()); 	
-			} 
-			catch (org.insa.graphs.model.IllegalArgumentException e) 
-			{
-				System.out.println("Erreur"); e.printStackTrace();
-			}
-			
+            solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, arcs));			
         }
         return solution;
     }

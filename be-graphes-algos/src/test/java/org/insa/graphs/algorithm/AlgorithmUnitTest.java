@@ -1,5 +1,7 @@
 package org.insa.graphs.algorithm;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -54,24 +56,54 @@ public class AlgorithmUnitTest extends AlgorithmTest{
     }
     @Test(expected = NullPointerException.class)
     public void DijikstraVideTest(){
-        cheminPratique(graph, -1, -1, Mode.LENGTH, TypeAlgorithme.Dijkstra);
+        try {
+            cheminPratique(graph, -1, -1, Mode.LENGTH, TypeAlgorithme.Dijkstra);
+        }
+        catch (org.insa.graphs.model.IllegalArgumentException e) {
+            fail("Expected exception NullPointerException not IllegalArgumentException");
+        }
     }
     @Test(expected = NullPointerException.class)
     public void AStarVideTest(){
-        cheminPratique(graph, -1, -1, Mode.LENGTH, TypeAlgorithme.AStar);
+        try {
+            cheminPratique(graph, -1, -1, Mode.LENGTH, TypeAlgorithme.AStar);
+        }
+        catch (org.insa.graphs.model.IllegalArgumentException e) {
+            fail("Expected exception NullPointerException not IllegalArgumentException");
+        }
     }
     @Test(expected = NullPointerException.class)
     public void DijikstraSansDestinationTest(){
-        cheminPratique(graph, 0, -1, Mode.LENGTH, TypeAlgorithme.Dijkstra);
+        try {
+            cheminPratique(graph, 0, -1, Mode.LENGTH, TypeAlgorithme.Dijkstra);
+        }
+        catch (org.insa.graphs.model.IllegalArgumentException e) {
+            fail("Expected exception NullPointerException not IllegalArgumentException");
+        }
     }
     @Test(expected = NullPointerException.class)
     public void AStarSansDestinationTest(){
-        cheminPratique(graph, 0, -1, Mode.LENGTH, TypeAlgorithme.AStar);
+        try {
+            cheminPratique(graph, 0, -1, Mode.LENGTH, TypeAlgorithme.AStar);
+        }
+        catch (org.insa.graphs.model.IllegalArgumentException e) {
+            fail("Expected exception NullPointerException not IllegalArgumentException");
+        }
     }
     public void DijikstraSurPlace(){
-        assertEquals(0,cheminPratique(graph, 0, 0, Mode.LENGTH, TypeAlgorithme.Dijkstra),0.001);
+        try {
+            assertEquals(0,cheminPratique(graph, 0, 0, Mode.LENGTH, TypeAlgorithme.Dijkstra),0.001);
+        }
+        catch (Exception e) {
+            fail("No exception expected");
+        }
     }
     public void AStarSurPlace(){
-        assertEquals(0,cheminPratique(graph, 0, 0, Mode.LENGTH, TypeAlgorithme.AStar),0.001);
+        try {
+            assertEquals(0,cheminPratique(graph, 0, 0, Mode.LENGTH, TypeAlgorithme.AStar),0.001);
+        }
+        catch (Exception e) {
+            fail("No exception expected");
+        }
     }
 }

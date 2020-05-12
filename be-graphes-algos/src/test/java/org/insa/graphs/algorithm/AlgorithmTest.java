@@ -94,7 +94,7 @@ public class AlgorithmTest {
         else
             filtre_arc_autorises = ArcInspectorFactory.getAllFilters().get(2);
         ShortestPathData data = new ShortestPathData(graph, origine,destination, filtre_arc_autorises);
-        ShortestPathSolution solution;
+        ShortestPathSolution solution = null;
         if(algorithme == TypeAlgorithme.Bellman)
             solution = (new BellmanFordAlgorithm(data)).run();
         else if(algorithme == TypeAlgorithme.Dijkstra)

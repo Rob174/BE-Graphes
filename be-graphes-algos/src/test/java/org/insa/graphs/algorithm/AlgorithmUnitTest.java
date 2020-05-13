@@ -92,7 +92,7 @@ public class AlgorithmUnitTest extends AlgorithmTest{
     }
     public void DijikstraSurPlace(){
         try {
-            assertEquals(0,cheminPratique(graph, 0, 0, Mode.LENGTH, TypeAlgorithme.Dijkstra),0.001);
+            assertEquals(0,cheminPratique(graph, 0, 0, Mode.LENGTH, TypeAlgorithme.Dijkstra).get(0),0.001);
         }
         catch (Exception e) {
             fail("No exception expected");
@@ -100,7 +100,7 @@ public class AlgorithmUnitTest extends AlgorithmTest{
     }
     public void AStarSurPlace(){
         try {
-            assertEquals(0,cheminPratique(graph, 0, 0, Mode.LENGTH, TypeAlgorithme.AStar),0.001);
+            assertEquals(0,cheminPratique(graph, 0, 0, Mode.LENGTH, TypeAlgorithme.AStar).get(0),0.001);
         }
         catch (Exception e) {
             fail("No exception expected");

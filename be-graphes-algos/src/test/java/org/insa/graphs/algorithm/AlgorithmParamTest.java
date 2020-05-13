@@ -3,6 +3,8 @@ package org.insa.graphs.algorithm;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+
 import org.insa.graphs.model.Graph;
 import org.insa.graphs.model.IllegalArgumentException;
 import org.junit.Test;
@@ -42,60 +44,63 @@ public class AlgorithmParamTest extends AlgorithmTest {
         this.origine = origine;
         this.destination = destination;
     }
-
+    public void checkResults(List<Double> ecarts){ 
+        String statut_path = "", statut_bellman = "";
+        if (ecarts.get(0).doubleValue() > PRECISION) {
+            statut_path = "Echec comparaison avec méthodes path : écart "+ecarts.get(0);
+        }
+        if (ecarts.get(1).doubleValue() > PRECISION) {
+            statut_bellman = "Echec comparaison Bellman : écart "+ecarts.get(1);
+        }
+        if((ecarts.get(0).doubleValue() > PRECISION) || (ecarts.get(1).doubleValue() > PRECISION)){
+            fail(statut_path+"\n"+statut_bellman+"\n avec une précision de " + PRECISION);
+        }
+    }
     @Test
     public void testDijkstraShortest() {
-        double ecart =  Double.POSITIVE_INFINITY;
+        List<Double> ecarts = Arrays.asList(new Double []{Double.POSITIVE_INFINITY,Double.POSITIVE_INFINITY});
         try {
-            ecart = cheminPratique(graph, origine, destination, Mode.LENGTH, TypeAlgorithme.Dijkstra);
+            ecarts = cheminPratique(graph, origine, destination, Mode.LENGTH, TypeAlgorithme.Dijkstra);
         } catch (Exception e) {
             e.printStackTrace();
             fail("Unexpected Exception : "+e.toString());
-        } 
-        if (ecart > PRECISION) {
-            fail("Ecart de distance de plus de " + PRECISION + " avec " + ecart);
         }
+        checkResults(ecarts);
     }
 
     @Test
     public void testDijkstraFastest() {
-        double ecart =  Double.POSITIVE_INFINITY;
+        List<Double> ecarts = Arrays.asList(new Double []{Double.POSITIVE_INFINITY,Double.POSITIVE_INFINITY});
         try {
-            ecart = cheminPratique(graph, origine, destination, Mode.TIME, TypeAlgorithme.Dijkstra);
+            ecarts = cheminPratique(graph, origine, destination, Mode.TIME, TypeAlgorithme.Dijkstra);
         } catch (Exception e) {
             e.printStackTrace();
             fail("Unexpected Exception : "+e.toString());
         } 
-        if (ecart > PRECISION) {
-            fail("Ecart de distance de plus de " + PRECISION + " avec " + ecart);
-        }
+        checkResults(ecarts);
     }
 
     @Test
     public void testAStarShortest() {
-        double ecart =  Double.POSITIVE_INFINITY;
+        List<Double> ecarts = Arrays.asList(new Double []{Double.POSITIVE_INFINITY,Double.POSITIVE_INFINITY});
         try {
-            ecart = cheminPratique(graph, origine, destination, Mode.LENGTH, TypeAlgorithme.AStar);
+            ecarts = cheminPratique(graph, origine, destination, Mode.LENGTH, TypeAlgorithme.AStar);
         } catch (Exception e) {
             e.printStackTrace();
             fail("Unexpected Exception : "+e.toString());
         } 
-        if(ecart > PRECISION){
-            fail("Ecart de distance de plus de "+PRECISION+" avec "+ecart);
-        }
+        checkResults(ecarts);
     }
     @Test
     public void testAStarFastest(){
-        double ecart =  Double.POSITIVE_INFINITY;
+        List<Double> ecarts = Arrays.asList(new Double []{Double.POSITIVE_INFINITY,Double.POSITIVE_INFINITY});
         try {
-            ecart = cheminPratique(graph, origine, destination, Mode.TIME, TypeAlgorithme.AStar);
+            ecarts = cheminPratique(graph, origine, destination, Mode.TIME, TypeAlgorithme.AStar);
         } catch (Exception e) {
             e.printStackTrace();
             fail("Unexpected Exception : "+e.toString());
         } 
-        if(ecart > PRECISION){
-            fail("Ecart de distance de plus de "+PRECISION+" avec "+ecart);
-        }
+        checkResults(ecarts);
     }
     
 }

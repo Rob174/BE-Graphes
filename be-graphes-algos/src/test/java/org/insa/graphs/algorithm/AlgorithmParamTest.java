@@ -16,7 +16,7 @@ import org.insa.graphs.algorithm.AbstractInputData.Mode;
 @RunWith(Parameterized.class)
 public class AlgorithmParamTest extends AlgorithmTest {
     private static ArrayList<Graph> graph_map;
-    private static String[] graphs_names = new String[] { "carre", "carre-dense", "insa", "haute-garonne" };
+    private static String[] graphs_names = new String[] { "carre", "insa", "haute-garonne", "guadeloupe" };
 
     @Parameters(name = "{index}: Carte {0}, de {1} vers {2}")
     public static Collection<Object[]> data() {
@@ -27,7 +27,8 @@ public class AlgorithmParamTest extends AlgorithmTest {
         }
         return Arrays.asList(new Object[][] { { 0, 5, 4 }, // Carte carrée
                 { 1, 259, 814 }, // Carte insa
-                { 1, 1052, 656 }, { 2, 55947, 100306 }, // Carte haute-garonne
+                { 1, 1052, 656 }, 
+                { 2, 55947, 100306 }, // Carte haute-garonne
                 { 2, 153997, 101286 }, 
                 { 2, 55947, 56506 }, 
                 { 2, 60630, 144268 }, 
@@ -49,7 +50,7 @@ public class AlgorithmParamTest extends AlgorithmTest {
             ecart = cheminPratique(graph, origine, destination, Mode.LENGTH, TypeAlgorithme.Dijkstra);
         } catch (Exception e) {
             e.printStackTrace();
-            fail("Unexpected Exception");
+            fail("Unexpected Exception : "+e.toString());
         } 
         if (ecart > PRECISION) {
             fail("Ecart de distance de plus de " + PRECISION + " avec " + ecart);
@@ -63,7 +64,7 @@ public class AlgorithmParamTest extends AlgorithmTest {
             ecart = cheminPratique(graph, origine, destination, Mode.TIME, TypeAlgorithme.Dijkstra);
         } catch (Exception e) {
             e.printStackTrace();
-            fail("Unexpected Exception");
+            fail("Unexpected Exception : "+e.toString());
         } 
         if (ecart > PRECISION) {
             fail("Ecart de distance de plus de " + PRECISION + " avec " + ecart);
@@ -77,7 +78,7 @@ public class AlgorithmParamTest extends AlgorithmTest {
             ecart = cheminPratique(graph, origine, destination, Mode.LENGTH, TypeAlgorithme.AStar);
         } catch (Exception e) {
             e.printStackTrace();
-            fail("Unexpected Exception");
+            fail("Unexpected Exception : "+e.toString());
         } 
         if(ecart > PRECISION){
             fail("Ecart de distance de plus de "+PRECISION+" avec "+ecart);
@@ -90,7 +91,7 @@ public class AlgorithmParamTest extends AlgorithmTest {
             ecart = cheminPratique(graph, origine, destination, Mode.TIME, TypeAlgorithme.AStar);
         } catch (Exception e) {
             e.printStackTrace();
-            fail("Unexpected Exception");
+            fail("Unexpected Exception : "+e.toString());
         } 
         if(ecart > PRECISION){
             fail("Ecart de distance de plus de "+PRECISION+" avec "+ecart);

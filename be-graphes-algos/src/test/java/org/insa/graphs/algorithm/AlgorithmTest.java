@@ -62,6 +62,7 @@ public class AlgorithmTest {
             exception.printStackTrace(System.out);
             return null;
         }
+        System.out.println("Graph "+chemin_absolu+" ouvert");
         return graph;
     }
     /**

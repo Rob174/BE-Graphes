@@ -111,10 +111,13 @@ public class AlgorithmTest {
             nodes_path.add(arc.getDestination());
         }
         Path chemin_theorique;
-        if(mode_rapidite == Mode.LENGTH)
+        if(mode_rapidite == Mode.LENGTH) {
             chemin_theorique = Path.createShortestPathFromNodes(graph, nodes_path); 
-        else 
+            return (double)(Math.abs(chemin_choisi.getLength()-chemin_theorique.getLength()));
+        }
+        else {
             chemin_theorique = Path.createFastestPathFromNodes(graph, nodes_path); 
-        return (double)(Math.abs(chemin_choisi.getLength()-chemin_theorique.getLength()));
+            return (double)(Math.abs(chemin_choisi.getMinimumTravelTime()-chemin_theorique.getMinimumTravelTime()));
+        }
     }
 }

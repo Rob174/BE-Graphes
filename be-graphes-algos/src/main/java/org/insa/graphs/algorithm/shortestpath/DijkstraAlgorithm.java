@@ -14,11 +14,13 @@ import org.insa.graphs.algorithm.AbstractInputData.Mode;
 public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 
     public DijkstraAlgorithm(ShortestPathData data) {
-        super(data);
+		super(data);
+		this.nom = "dijikstra";
     }
     public Label createLabel(Node sommet_courant, boolean marque, double cout, double coutEstime, Arc pere,Node destination) {
     	return new Label(sommet_courant,marque,cout,pere);
-    }
+	}
+	 
     @Override
     protected ShortestPathSolution doRun() throws NullPointerException {
 		final ShortestPathData data = getInputData();
@@ -27,11 +29,12 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 		if(data.getDestination().equals(null))
 			throw new NullPointerException("Il manque la destination du trajet");
 		
-        Graph graph = data.getGraph();
+		Graph graph = data.getGraph();
         ShortestPathSolution solution = null;
         final int nbNodes = graph.size();
-        BinaryHeap<Label> tas = new BinaryHeap<Label>();
+		BinaryHeap<Label> tas = new BinaryHeap<Label>();
         
+		long debut = System.nanoTime();
         // Initialize array of distances.
         Label[] labels = new Label[nbNodes];
     	if(data.getMode() == Mode.LENGTH) {
@@ -75,7 +78,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         		arret = true;
         		break;
         	}
-        	x.marquer();
+			x.marquer();
+			resultat.nb_noeuds_marques++;
+			resultat.taille_max_tas = Math.max(tas.getCurrentSize(),resultat.taille_max_tas);
         	notifyNodeMarked(x.getCurrentNode());
         	try
         	{
@@ -97,6 +102,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
                 
                 if (Double.isInfinite(oldDistance) && Double.isFinite(newDistance)) {
 					notifyNodeReached(arc.getDestination());
+					resultat.nb_noeuds_explores++;
 					moy_crte.incr_num();
 					nb++;
                 }
@@ -124,7 +130,8 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
                 notifyNodeReached(x.getFather().getDestination());
 			}
 			nb_moyen_parc++;
-        }
+		}
+		resultat.temps_calcul = System.nanoTime()-debut;
         // Destination has no predecessor, the solution is infeasible...
         if (labels[data.getDestination().getId()].getFather() == null || arret == true) {
             solution = new ShortestPathSolution(data, Status.INFEASIBLE);
@@ -136,7 +143,8 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     		System.out.println("Total du total "+((double)(nb)/(double)(nb_noeuds_tot))+" prct");
             // The destination has been found, notify the observers.
             notifyDestinationReached(data.getDestination());
-
+			resultat.cout = labels[data.getDestination().getId()].getCost();
+			write_results(data);
 			// Create the path from the array of predecessors...
 			if(data.getOrigin().getId()==data.getDestination().getId())
 				return new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, data.getOrigin()));

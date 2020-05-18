@@ -14,6 +14,7 @@ public class BellmanFordAlgorithm extends ShortestPathAlgorithm {
 
     public BellmanFordAlgorithm(ShortestPathData data) {
         super(data);
+        this.nom = "bellmanFord";
     }
 
     @Override
@@ -25,6 +26,9 @@ public class BellmanFordAlgorithm extends ShortestPathAlgorithm {
 
         final int nbNodes = graph.size();
 
+		long debut = System.nanoTime();
+        resultat.nb_noeuds_marques = -1;//il n'y a pas de notion de marquage ici
+        resultat.taille_max_tas = -1;//et pas de notion de tas
         // Initialize array of distances.
         double[] distances = new double[nbNodes];
         Arrays.fill(distances, Double.POSITIVE_INFINITY);
@@ -56,6 +60,7 @@ public class BellmanFordAlgorithm extends ShortestPathAlgorithm {
 
                     if (Double.isInfinite(oldDistance) && Double.isFinite(newDistance)) {
                         notifyNodeReached(arc.getDestination());
+                        resultat.nb_noeuds_explores++;
                     }
 
                     // Check if new distances would be better, if so update...
@@ -67,6 +72,7 @@ public class BellmanFordAlgorithm extends ShortestPathAlgorithm {
                 }
             }
         }
+		resultat.temps_calcul = System.nanoTime()-debut;
 
         ShortestPathSolution solution = null;
 
@@ -78,6 +84,8 @@ public class BellmanFordAlgorithm extends ShortestPathAlgorithm {
 
             // The destination has been found, notify the observers.
             notifyDestinationReached(data.getDestination());
+			resultat.cout = distances[data.getDestination().getId()];
+			write_results(data);
 
             // Create the path from the array of predecessors...
             ArrayList<Arc> arcs = new ArrayList<>();

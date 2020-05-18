@@ -1,14 +1,58 @@
 package org.insa.graphs.algorithm.shortestpath;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.insa.graphs.algorithm.AbstractAlgorithm;
+import org.insa.graphs.algorithm.AbstractInputData.Mode;
 import org.insa.graphs.model.Node;
 
 public abstract class ShortestPathAlgorithm extends AbstractAlgorithm<ShortestPathObserver> {
+    public class Resultat {
+        public double cout = -1;// lire sur le dernier Label
+        public long temps_calcul = 0;
+        public int nb_noeuds_explores = 0;
+        public int nb_noeuds_marques = 0;
+        public int taille_max_tas = 0;
+    }
+
+    public Resultat resultat = new Resultat();
+    protected String nom;
 
     protected ShortestPathAlgorithm(ShortestPathData data) {
         super(data);
     }
 
+    void write_results(ShortestPathData data) {
+        try {
+            FileWriter writer = new FileWriter("/home/robin/Documents/Cours/BE-Graphes/tests_performance/output.csv", true);
+            List<String> liste = Arrays.asList(new String[] {
+                                nom,
+                                data.getGraph().getMapName(),
+                                data.getMode() == Mode.LENGTH ? "longueur" : "temps",
+                                String.valueOf(data.getOrigin().getId()),
+                                String.valueOf(data.getDestination().getId()),
+                                String.valueOf(resultat.cout),
+                                String.valueOf(resultat.temps_calcul),
+                                String.valueOf(resultat.nb_noeuds_explores),
+                                String.valueOf(resultat.nb_noeuds_marques),
+                                String.valueOf(resultat.taille_max_tas)
+
+            });
+            String ligne = String.join(",", liste);
+            writer.append(ligne);
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            System.out.println("Erreur d'ouverture du fichier de sauvegarde");
+            e.printStackTrace();
+        }
+        
+    }
     @Override
     public ShortestPathSolution run() {
         return (ShortestPathSolution) super.run();
@@ -16,6 +60,7 @@ public abstract class ShortestPathAlgorithm extends AbstractAlgorithm<ShortestPa
 
     @Override
     protected abstract ShortestPathSolution doRun();
+    
 
     @Override
     public ShortestPathData getInputData() {

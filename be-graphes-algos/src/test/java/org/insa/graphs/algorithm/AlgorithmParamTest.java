@@ -34,9 +34,11 @@ public class AlgorithmParamTest extends AlgorithmTest {
                 { 2, 153997, 101286 }, 
                 { 2, 55947, 56506 }, 
                 { 2, 60630, 144268 }, 
-                { 3, 29816, 14715 }, // Carte
-                                                                                                       // guadeloupe
-                { 3, 8942, 12531 }, { 3, 32670, 33072 }, { 3, 33068, 27536 }, { 3, 26278, 27536 } });
+                { 3, 29816, 14715 }, // Carte guadeloupe
+                { 3, 8942, 12531 }, 
+                { 3, 32670, 33072 }, 
+                { 3, 33068, 27536 }, 
+                { 3, 26278, 27536 } });
     }
 
     public AlgorithmParamTest(int index_graph, int origine, int destination) {

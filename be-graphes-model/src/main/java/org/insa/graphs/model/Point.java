@@ -26,6 +26,7 @@ public final class Point {
                 * Math.cos(Math.toRadians(p2.getLatitude()));
         double cosLong = Math.cos(Math.toRadians(p2.getLongitude() - p1.getLongitude()));
         return EARTH_RADIUS * Math.acos(sinLat + cosLat * cosLong);
+        //Potentiellement problématique si les 2 points ont des coordonnées très proches
     }
 
     // Longitude and latitude of the point.

@@ -40,14 +40,13 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     	if(data.getMode() == Mode.LENGTH) {
     		System.out.println("Mode distance");
     		for (int i = 0; i < nbNodes; i++) {
-    			if(graph.getNodes().get(i).getId()==126) {
-    				@SuppressWarnings("unused")
-					int breakpt = 0;
-    			}
+				double distance = graph.getNodes().get(i).getPoint().distanceTo(data.getDestination().getPoint());
+				if(Double.isNaN(distance)==true)//Si bug de la méthode distanceTo on écarte le chemin et le met comme infaisable
+					return new ShortestPathSolution(data, Status.INFEASIBLE);
     			labels[i] = this.createLabel(graph.getNodes().get(i),
     										false,
-    										Double.POSITIVE_INFINITY, 
-    										graph.getNodes().get(i).getPoint().distanceTo(data.getDestination().getPoint()),
+    										Double.POSITIVE_INFINITY,
+    										distance,
     										null,
     										data.getDestination());
     		}
@@ -55,10 +54,13 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     	else {
     		System.out.println("Mode temps");
     		for (int i = 0; i < nbNodes; i++) {
+				double distance = graph.getNodes().get(i).getPoint().distanceTo(data.getDestination().getPoint());
+				if(Double.isNaN(distance)==true)//Si bug de la méthode distanceTo on écarte le chemin et le met comme infaisable
+					return new ShortestPathSolution(data, Status.INFEASIBLE);
         		labels[i] = this.createLabel(graph.getNodes().get(i),
 						false,
 						Double.POSITIVE_INFINITY,
-						graph.getNodes().get(i).getPoint().distanceTo(data.getDestination().getPoint())/graph.getGraphInformation().getMaximumSpeed(),
+						distance/graph.getGraphInformation().getMaximumSpeed(),
 						null,
 						data.getDestination());
     		}        		
@@ -93,7 +95,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	}
         	catch(ElementNotFoundException e)
         	{
-        		System.out.println("Cet élément n'existe pas");
+        		//System.out.println("Cet élément n'existe pas");
 			}
 			Fraction moy_crte = new Fraction((long)0,(long)(x.getCurrentNode().getSuccessors().size()));
         	for (Arc arc : x.getCurrentNode().getSuccessors()) {

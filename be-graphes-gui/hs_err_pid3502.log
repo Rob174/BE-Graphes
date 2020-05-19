@@ -1,0 +1,21 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x00007fd7a23140ad, pid=3502, tid=3517
+#
+# JRE version: OpenJDK Runtime Environment (14.0+18) (build 14-ea+18-Ubuntu-1)
+# Java VM: OpenJDK 64-Bit Server VM (14-ea+18-Ubuntu-1, mixed mode, sharing, tiered, compressed oops, g1 gc, linux-amd64)
+# Problematic frame:
+# C  [libjimage.so+0x30ad]
+#
+# Core dump will be written. Default location: Core dumps may be processed with "/usr/share/apport/apport %p %s %c %d %P %E" (or dumping to /home/robin/Documents/Cours/BE-Graphes/BE-Graphes/be-graphes-gui/core.3502)
+#
+# If you would like to submit a bug report, please visit:
+#   Unknown
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -agentlib:jdwp=transport=dt_socket,suspend=y,address=localhost:38611 -javaagent:/home/robin/.eclipse/360744286_linux_gtk_x86_64/configuration/org.eclipse.osgi/222/0/.cp/lib/javaagent-shaded.jar -Dfile.encoding=UTF-8 org.insa.graphs.gui.MainWindow
+
+Host: 

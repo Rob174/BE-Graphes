@@ -139,8 +139,8 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         else {
 
             double res = tmp_num.calcul()/(double)(nb_moyen_parc);
-    		System.out.println("Total en moy "+res+" prct");
-    		System.out.println("Total du total "+((double)(nb)/(double)(nb_noeuds_tot))+" prct");
+    		//System.out.println("Total en moy "+res+" prct");
+    		//System.out.println("Total du total "+((double)(nb)/(double)(nb_noeuds_tot))+" prct");
             // The destination has been found, notify the observers.
             notifyDestinationReached(data.getDestination());
 			resultat.cout = labels[data.getDestination().getId()].getCost();

@@ -44,7 +44,7 @@ public abstract class ShortestPathAlgorithm extends AbstractAlgorithm<ShortestPa
 
             });
             String ligne = String.join(",", liste);
-            writer.append(ligne);
+            writer.append(ligne+"\n");
             writer.flush();
             writer.close();
         } catch (IOException e) {

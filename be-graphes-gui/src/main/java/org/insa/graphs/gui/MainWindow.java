@@ -71,6 +71,7 @@ import org.insa.graphs.model.io.BinaryGraphReader;
 import org.insa.graphs.model.io.BinaryPathReader;
 import org.insa.graphs.model.io.GraphReader;
 import org.insa.graphs.model.io.MapMismatchException;
+import org.insa.graphs.algorithm.TestsPerformances;
 
 public class MainWindow extends JFrame {
 
@@ -841,7 +842,8 @@ public class MainWindow extends JFrame {
     }
 
     public static void main(final String[] args) {
-
+    	//TestsPerformances.parse_input();
+        //TestsPerformances.process_random();
         // Try to set system look and feel.
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

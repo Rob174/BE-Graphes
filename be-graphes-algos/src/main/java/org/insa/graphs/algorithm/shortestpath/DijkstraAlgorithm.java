@@ -40,9 +40,13 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     	if(data.getMode() == Mode.LENGTH) {
     		System.out.println("Mode distance");
     		for (int i = 0; i < nbNodes; i++) {
+    			if(graph.getNodes().get(i).getId()==126) {
+    				@SuppressWarnings("unused")
+					int breakpt = 0;
+    			}
     			labels[i] = this.createLabel(graph.getNodes().get(i),
     										false,
-    										Double.POSITIVE_INFINITY,
+    										Double.POSITIVE_INFINITY, 
     										graph.getNodes().get(i).getPoint().distanceTo(data.getDestination().getPoint()),
     										null,
     										data.getDestination());
@@ -89,7 +93,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	}
         	catch(ElementNotFoundException e)
         	{
-        		//System.out.println("Cet élément n'existe pas");
+        		System.out.println("Cet élément n'existe pas");
 			}
 			Fraction moy_crte = new Fraction((long)0,(long)(x.getCurrentNode().getSuccessors().size()));
         	for (Arc arc : x.getCurrentNode().getSuccessors()) {

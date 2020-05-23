@@ -843,9 +843,9 @@ public class MainWindow extends JFrame {
 
     public static void main(final String[] args) {
     	//TestsPerformances.parse_input();
-        TestsPerformances.process_random();
+        //TestsPerformances.process_random();
         // Try to set system look and feel.
-        /*try {
+        try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }
         catch (Exception e) {
@@ -858,7 +858,7 @@ public class MainWindow extends JFrame {
                 w.setExtendedState(JFrame.MAXIMIZED_BOTH);
                 w.setVisible(true);
             }
-        });*/
+        });
     }
 
 }

@@ -29,7 +29,7 @@ import org.insa.graphs.algorithm.shortestpath.BellmanFordAlgorithm;
 import org.insa.graphs.algorithm.shortestpath.AStarAlgorithm;
 
 public class AlgorithmTest {
-    protected static final double PRECISION = 0.001;
+    protected static final double PRECISION = 0.1;
 
     protected Graph graph;
     protected int origine;
@@ -37,6 +37,16 @@ public class AlgorithmTest {
 
     public enum TypeAlgorithme {
         Bellman, Dijkstra, AStar;
+    }
+    public static class ExecutionAlgo {
+        private ShortestPathData data;
+        private ShortestPathSolution solution;
+        public ExecutionAlgo(ShortestPathData data,ShortestPathSolution solution){
+            this.data = data;
+            this.solution = solution;
+        }
+        public ShortestPathData data(){return this.data;}
+        public ShortestPathSolution solution(){return this.solution;}
     }
 
     /**
@@ -83,11 +93,17 @@ public class AlgorithmTest {
      * 
      */
     public List<Double> cheminPratique(Graph graph,int num_or,int num_dest, Mode mode_rapidite, TypeAlgorithme algorithme) throws IllegalArgumentException, NullPointerException {
+        ExecutionAlgo execution = execution_algo(graph, num_or, num_dest, mode_rapidite, algorithme);
+        if(execution.solution().isFeasible() == false)
+            return Arrays.asList(new Double[]{-1.,-1.});
+        return verifications(graph,execution.data(),execution.solution(), mode_rapidite);
+    }
+    public static ExecutionAlgo execution_algo(Graph graph,int num_or,int num_dest, Mode mode_rapidite, TypeAlgorithme algorithme) throws IllegalArgumentException, NullPointerException {
         Node origine,destination;
         //Préparation des cas limite où il manque un des noeuds
         if(num_or == -1)
             origine = null;
-        else
+        else 
             origine = graph.get(num_or);
         if(num_dest == -1)
             destination = null;
@@ -100,7 +116,7 @@ public class AlgorithmTest {
         else
             filtre_arc_autorises = ArcInspectorFactory.getAllFilters().get(2);
         ShortestPathData data = new ShortestPathData(graph, origine,destination, filtre_arc_autorises);
-        ShortestPathSolution solution = null, solution_oracle = null;
+        ShortestPathSolution solution = null;
         //Execution de l'algorithme à tester
         if(algorithme == TypeAlgorithme.Bellman)
             solution = (new BellmanFordAlgorithm(data)).run();
@@ -108,14 +124,16 @@ public class AlgorithmTest {
             solution = (new DijkstraAlgorithm(data)).run();
         else if(algorithme == TypeAlgorithme.AStar)
             solution = (new AStarAlgorithm(data)).run();
-        if(solution.isFeasible() == false)
-            return Arrays.asList(new Double[]{-1.,-1.});//TODO : a revoir si ok le -1 par rapport aux cas de test (problèmes lancés)
-        Path chemin_choisi, chemin_oracle;
-        chemin_choisi = solution.getPath();
+        AlgorithmTest.ExecutionAlgo execution = new AlgorithmTest.ExecutionAlgo(data,solution);
+        return execution;
+    }
+    public static List<Double> verifications(Graph graph,ShortestPathData data,ShortestPathSolution chemin_algo_test, Mode mode_rapidite){
+        
+        Path chemin_choisi = chemin_algo_test.getPath();
         double diff_theorie = Double.POSITIVE_INFINITY, diff_bellman = Double.POSITIVE_INFINITY;
         //Verification difference avec Bellman-Ford
-        solution_oracle = (new BellmanFordAlgorithm(data)).run();
-        chemin_oracle = solution_oracle.getPath();
+        ShortestPathSolution solution_oracle = (new BellmanFordAlgorithm(data)).run();
+        Path chemin_oracle = solution_oracle.getPath();
         if(mode_rapidite == Mode.LENGTH) {
             diff_bellman = (double)(Math.abs(chemin_choisi.getLength()-chemin_oracle.getLength()));
         }
@@ -130,13 +148,25 @@ public class AlgorithmTest {
         }
         Path chemin_theorique;
         if(mode_rapidite == Mode.LENGTH) {
-            chemin_theorique = Path.createShortestPathFromNodes(graph, nodes_path); 
+            try {
+                chemin_theorique = Path.createShortestPathFromNodes(graph, nodes_path); 
+            }
+            catch (IllegalArgumentException e) {
+                fail("IllegalArgumentException error");
+                return Arrays.asList(new Double[]{Double.POSITIVE_INFINITY,Double.POSITIVE_INFINITY,});
+            }
             diff_theorie = (double)(Math.abs(chemin_choisi.getLength()-chemin_theorique.getLength()));
         }
         else {
-            chemin_theorique = Path.createFastestPathFromNodes(graph, nodes_path); 
+            try{
+                chemin_theorique = Path.createFastestPathFromNodes(graph, nodes_path);
+            }
+            catch (IllegalArgumentException e) {
+                fail("IllegalArgumentException error");
+                return Arrays.asList(new Double[]{Double.POSITIVE_INFINITY,Double.POSITIVE_INFINITY,});
+            }
             diff_theorie = (double)(Math.abs(chemin_choisi.getMinimumTravelTime()-chemin_theorique.getMinimumTravelTime()));
         }   
-        return Arrays.asList(new Double[]{diff_theorie,diff_bellman});
+        return Arrays.asList(new Double[]{diff_theorie,diff_bellman,});
     }
 }

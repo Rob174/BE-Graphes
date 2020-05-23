@@ -24,7 +24,7 @@ public class AlgorithmParamTest extends AlgorithmTest {
     public static Collection<Object[]> data() {
         graph_map = new ArrayList<Graph>();
         for (String name : graphs_names) {
-            Graph g = open_graph("/home/robin/Documents/Cours/BE-Graphes/" + name + ".mapgr");
+            Graph g = open_graph("/home/robin/Documents/Cours/BE-Graphes/cartes/" + name + ".mapgr");
             graph_map.add(g);
         }
         return Arrays.asList(new Object[][] { { 0, 5, 4 }, // Carte carrée

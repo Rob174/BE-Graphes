@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import traceback
 from mpl_toolkits.mplot3d import Axes3D
+from scipy.stats import pearsonr
 """ 
 On sait : 
 - Complexité Bellman > Dijkstra > A* --> doit se voir avec le temps d'exécution
@@ -107,31 +108,31 @@ for test in tests:
 
 ## Analyse les données
 fig = plt.figure()
-ax_cout_distance = fig.add_subplot(111, xlabel="distance_chemin", ylabel="temps_calc")
-ax_cout_temps = ax_cout_distance.twinx()
-for mode,ax,marker,loc_leg in zip(["longueur","temps"],[ax_cout_distance,ax_cout_temps],["o","v"],["upper left","lower right"]):
-    for algo in ["bellmanFord","dijikstra","astar"]:
-        condition = lambda x:"INSA" in x.trajet
-        Lpts_cout = [traj.get_val(algo,mode,"cout") for traj in liste_trajets if condition(traj)]
-        condition = lambda x:x!= None
-        x_coord = [pt[0] for pt in Lpts_cout if condition(pt)]
-        y_coord = [pt[1] for pt in Lpts_cout if condition(pt)]
-        print(algo," : \t",np.mean(y_coord),"\t",np.std(y_coord),"\t",np.min(y_coord),"\t",np.max(y_coord))
-        ax.plot(x_coord,y_coord,label=algo+" cout "+mode,linestyle='',marker=marker,alpha=0.5)
+ax_cout_temps = fig.add_subplot(111, xlabel="distance_chemin", ylabel="temps_calc")
+mode,ax,marker,loc_leg = "longueur",ax_cout_temps,"v","lower right"
+print("         \t\tMean\t\t\tStd\t\t\tMin\t\t\tMax\t\t\tR²")
+for algo in ["bellmanFord","dijikstra","astar"]:
+    condition = lambda x:"Haute" in x.trajet
+    Lpts_cout = [traj.get_val(algo,mode,"cout") for traj in liste_trajets if condition(traj)]
+    condition = lambda x:x!= None
+    x_coord = [pt[0] for pt in Lpts_cout if condition(pt)]
+    y_coord = [pt[1] for pt in Lpts_cout if condition(pt)]
+    print(algo," : \t",np.mean(y_coord),"\t",np.std(y_coord),"\t",np.min(y_coord),"\t",np.max(y_coord),"\t",np.corrcoef(x_coord,y_coord)[0,1])
+    ax.plot(x_coord,y_coord,label=algo+" cout "+mode,linestyle='',marker=marker,alpha=0.5)
 
-        deltaX = (max(x_coord)-min(x_coord))/10.
-        deltaY = (max(y_coord)-min(y_coord))/10.
+    deltaX = (max(x_coord)-min(x_coord))/10.
+    deltaY = (max(y_coord)-min(y_coord))/10.
 
-        x_tend = np.array([deltaX/100.*i for i in range(10*100)])
-        z = np.polyfit(x_coord, y_coord, 1)
-        p = np.poly1d(z)
-        ax.plot(x_tend,p(x_tend),linestyle="--",label="tendance "+algo+" cout "+mode+" : "+"y=%.6fx+%.6f"%(z[0],z[1]))
-        ax.set_xticks([int(deltaX*i) for i in range(10)])
-        ax.set_yticks([int(deltaY*i) for i in range(10)])
-        ax.set_xticklabels([int(deltaX*i) for i in range(10)])
-        ax.set_yticklabels([int(deltaY*i) for i in range(10)])
-        ax.set_xlim(min(x_coord),max(x_coord))
-        ax.set_ylim(min(y_coord),max(y_coord))
-        ax.set_ylabel("cout en "+mode)
-        ax.legend(loc=loc_leg)
+    x_tend = np.array([deltaX/100.*i for i in range(10*100)])
+    z = np.polyfit(x_coord, y_coord, 1)
+    p = np.poly1d(z)
+    ax.plot(x_tend,p(x_tend),linestyle="--",label="tendance "+algo+" cout "+mode+" : "+"y=%.6fx+%.6f"%(z[0],z[1]))
+    ax.set_xticks([int(deltaX*i) for i in range(10)])
+    ax.set_yticks([int(deltaY*i) for i in range(10)])
+    ax.set_xticklabels([int(deltaX*i) for i in range(10)])
+    ax.set_yticklabels([int(deltaY*i) for i in range(10)])
+    ax.set_xlim(min(x_coord),max(x_coord))
+    ax.set_ylim(min(y_coord),max(y_coord))
+    ax.set_ylabel("cout en "+mode)
+    ax.legend(loc=loc_leg)
 plt.show()

@@ -37,11 +37,11 @@ class Trajet:
             self.algo[algo].insert_res(mode,resultat)
         resultat.algo = self.algo[algo]
         resultat.trajet = self
-    def get_val(self,algo,mode,value):
+    def get_val(self,algo,mode,value,info_trajet=False):
         try:
             ret = self.distance,self.algo[algo].modes[mode].get_val(value)
             # print("ok d=",self.distance)
-            return ret
+            return ret if info_trajet==False else self.trajet,ret[1]
         except Exception as e:
             pass
             # print("Error ",e," : not found continue...")
@@ -108,31 +108,53 @@ for test in tests:
 
 ## Analyse les données
 fig = plt.figure()
-ax_cout_temps = fig.add_subplot(111, xlabel="distance_chemin", ylabel="temps_calc")
+x_lab,y_lab = "cout","nb_noeuds_explores"
+ax_cout_temps = fig.add_subplot(111, xlabel=x_lab, ylabel=y_lab)
 mode,ax,marker,loc_leg = "longueur",ax_cout_temps,"v","lower right"
-print("         \t\tMean\t\t\tStd\t\t\tMin\t\t\tMax\t\t\tR²")
-for algo in ["bellmanFord","dijikstra","astar"]:
-    condition = lambda x:"Haute" in x.trajet
-    Lpts_cout = [traj.get_val(algo,mode,"cout") for traj in liste_trajets if condition(traj)]
+print("         \t\tMean\t\t\tStd\t\tMin\t\tMax\t\t\tR²")
+for algo in ["dijikstra","astar"]:
+    condition = lambda x:"INSA" in x.trajet
+    x_coord = [traj.get_val(algo,mode,x_lab) for traj in liste_trajets if condition(traj)]
+    y_coord = [traj.get_val(algo,mode,y_lab) for traj in liste_trajets if condition(traj)]
+
     condition = lambda x:x!= None
-    x_coord = [pt[0] for pt in Lpts_cout if condition(pt)]
-    y_coord = [pt[1] for pt in Lpts_cout if condition(pt)]
+    x_coord = [pt[1] for pt in x_coord if condition(pt)]
+    y_coord = [pt[1] for pt in y_coord if condition(pt)]
     print(algo," : \t",np.mean(y_coord),"\t",np.std(y_coord),"\t",np.min(y_coord),"\t",np.max(y_coord),"\t",np.corrcoef(x_coord,y_coord)[0,1])
-    ax.plot(x_coord,y_coord,label=algo+" cout "+mode,linestyle='',marker=marker,alpha=0.5)
+    ax.plot(x_coord,y_coord,label=algo+" "+y_lab+" "+mode,linestyle='',marker=marker,alpha=0.5)
+    sortedx,sortedy = np.sort(x_coord),np.sort(y_coord)
+    minx,maxx,miny,maxy = sortedx[0],sortedx[-1],sortedy[0],sortedy[-10]
+    deltaX = (maxx-minx)/10.
+    deltaY = (maxy-miny)/10.
 
-    deltaX = (max(x_coord)-min(x_coord))/10.
-    deltaY = (max(y_coord)-min(y_coord))/10.
-
-    x_tend = np.array([deltaX/100.*i for i in range(10*100)])
-    z = np.polyfit(x_coord, y_coord, 1)
-    p = np.poly1d(z)
-    ax.plot(x_tend,p(x_tend),linestyle="--",label="tendance "+algo+" cout "+mode+" : "+"y=%.6fx+%.6f"%(z[0],z[1]))
-    ax.set_xticks([int(deltaX*i) for i in range(10)])
-    ax.set_yticks([int(deltaY*i) for i in range(10)])
-    ax.set_xticklabels([int(deltaX*i) for i in range(10)])
-    ax.set_yticklabels([int(deltaY*i) for i in range(10)])
-    ax.set_xlim(min(x_coord),max(x_coord))
-    ax.set_ylim(min(y_coord),max(y_coord))
-    ax.set_ylabel("cout en "+mode)
+    # x_tend = np.array([deltaX/100.*i for i in range(10*100)])
+    # z = np.polyfit(x_coord, y_coord, 1)
+    # p = np.poly1d(z)
+    # ax.plot(x_tend,p(x_tend),linestyle="--",label="tendance "+algo+" "+y_lab+" "+mode+" : "+"y=%.6fx+%.6f"%(z[0],z[1]))
+    # ax.set_xticks([int(deltaX*i) for i in range(10)])
+    # ax.set_yticks([int(deltaY*i) for i in range(10)])
+    # ax.set_xticklabels([int(deltaX*i) for i in range(10)])
+    # ax.set_yticklabels([int(deltaY*i) for i in range(10)])
+    # ax.set_xlim(minx,maxx)
+    # ax.set_ylim(miny,maxy)
+    ax.set_ylabel(y_lab+" en mode "+mode)
     ax.legend(loc=loc_leg)
 plt.show()
+def dij_better(traj):
+    if "Haute" not in traj.trajet:
+        return None
+    astar = traj.get_val("dijikstra","longueur",y_lab,True)
+    dij = traj.get_val("astar","longueur",y_lab,True)
+    if astar == None or dij == None or astar[1] > dij[1]:
+        return None
+    else:
+        return  dij[0],dij[1],astar[1]
+dij_plus_perf_traj = list(filter(lambda x:x!=None,list(map(dij_better,liste_trajets))))
+if len(dij_plus_perf_traj) > 0:
+    Lsorted = sorted(dij_plus_perf_traj,key=lambda x:x[2]-x[1])
+    for traj,val_dij,val_astar in dij_plus_perf_traj:
+        print("Trajet : ",traj," dij ",val_dij," astar ",val_astar," diff ",val_astar-val_dij)
+
+    print("Trajet : ",Lsorted[-1][0]," dij ",Lsorted[-1][1]," astar ",Lsorted[-1][2]," diff ",Lsorted[-1][2]-Lsorted[-1][1])
+else:
+    print("Pas meilleur")

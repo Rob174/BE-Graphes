@@ -18,6 +18,7 @@ public abstract class ShortestPathAlgorithm extends AbstractAlgorithm<ShortestPa
         public int nb_noeuds_explores = 0;
         public int nb_noeuds_marques = 0;
         public int taille_max_tas = 0;
+        public double distance_vol_oiseau = 0;
     }
 
     public Resultat resultat = new Resultat();
@@ -40,7 +41,8 @@ public abstract class ShortestPathAlgorithm extends AbstractAlgorithm<ShortestPa
                                 String.valueOf(resultat.temps_calcul),
                                 String.valueOf(resultat.nb_noeuds_explores),
                                 String.valueOf(resultat.nb_noeuds_marques),
-                                String.valueOf(resultat.taille_max_tas)
+                                String.valueOf(resultat.taille_max_tas),
+                                String.valueOf(resultat.distance_vol_oiseau)
 
             });
             String ligne = String.join(",", liste);

@@ -25,7 +25,7 @@ public class BellmanFordAlgorithm extends ShortestPathAlgorithm {
         Graph graph = data.getGraph();
 
         final int nbNodes = graph.size();
-
+        resultat.distance_vol_oiseau = data.getOrigin().getPoint().distanceTo(data.getDestination().getPoint());
 		long debut = System.nanoTime();
         resultat.nb_noeuds_marques = -1;//il n'y a pas de notion de marquage ici
         resultat.taille_max_tas = -1;//et pas de notion de tas

@@ -35,6 +35,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 		BinaryHeap<Label> tas = new BinaryHeap<Label>();
         
 		long debut = System.nanoTime();
+		resultat.distance_vol_oiseau = data.getOrigin().getPoint().distanceTo(data.getDestination().getPoint());
         // Initialize array of distances.
         Label[] labels = new Label[nbNodes];
     	if(data.getMode() == Mode.LENGTH) {

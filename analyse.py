@@ -111,9 +111,11 @@ ax_cout_distance = fig.add_subplot(111, xlabel="distance_chemin", ylabel="temps_
 ax_cout_temps = ax_cout_distance.twinx()
 for mode,ax,marker,loc_leg in zip(["longueur","temps"],[ax_cout_distance,ax_cout_temps],["o","v"],["upper left","lower right"]):
     for algo in ["bellmanFord","dijikstra","astar"]:
-        Lpts_cout = [traj.get_val(algo,mode,"cout") for traj in liste_trajets]
-        x_coord = [pt[0] for pt in Lpts_cout if pt != None]
-        y_coord = [pt[1] for pt in Lpts_cout if pt != None]
+        condition = lambda x:"INSA" in x.trajet
+        Lpts_cout = [traj.get_val(algo,mode,"cout") for traj in liste_trajets if condition(traj)]
+        condition = lambda x:x!= None
+        x_coord = [pt[0] for pt in Lpts_cout if condition(pt)]
+        y_coord = [pt[1] for pt in Lpts_cout if condition(pt)]
         print(algo," : \t",np.mean(y_coord),"\t",np.std(y_coord),"\t",np.min(y_coord),"\t",np.max(y_coord))
         ax.plot(x_coord,y_coord,label=algo+" cout "+mode,linestyle='',marker=marker,alpha=0.5)
 

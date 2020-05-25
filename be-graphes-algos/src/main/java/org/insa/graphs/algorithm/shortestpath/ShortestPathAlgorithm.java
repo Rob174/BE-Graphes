@@ -19,6 +19,9 @@ public abstract class ShortestPathAlgorithm extends AbstractAlgorithm<ShortestPa
         public int nb_noeuds_marques = 0;
         public int taille_max_tas = 0;
         public double distance_vol_oiseau = 0;
+        public String toString(){
+            return "cout : "+this.cout+" temps_calcul : "+this.temps_calcul+" nb_noeuds_explores : "+this.nb_noeuds_explores+" nb_noeuds_marques : "+this.nb_noeuds_marques+" taille_max_tas : "+this.taille_max_tas+" distance_vol_oiseau : "+this.distance_vol_oiseau;
+        }
     }
 
     public Resultat resultat = new Resultat();

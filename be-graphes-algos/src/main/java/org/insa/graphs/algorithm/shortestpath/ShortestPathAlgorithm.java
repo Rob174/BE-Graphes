@@ -19,6 +19,8 @@ public abstract class ShortestPathAlgorithm extends AbstractAlgorithm<ShortestPa
         public int nb_noeuds_marques = 0;
         public int taille_max_tas = 0;
         public double distance_vol_oiseau = 0;
+        public double distance_max_marque = 0;
+        public double distance_max_explo = 0;
         public String toString(){
             return "cout : "+this.cout+" temps_calcul : "+this.temps_calcul+" nb_noeuds_explores : "+this.nb_noeuds_explores+" nb_noeuds_marques : "+this.nb_noeuds_marques+" taille_max_tas : "+this.taille_max_tas+" distance_vol_oiseau : "+this.distance_vol_oiseau;
         }
@@ -33,7 +35,7 @@ public abstract class ShortestPathAlgorithm extends AbstractAlgorithm<ShortestPa
 
     void write_results(ShortestPathData data) {
         try {
-            FileWriter writer = new FileWriter("/home/robin/Documents/Cours/BE-Graphes/tests_performance/output.csv", true);
+            FileWriter writer = new FileWriter("/home/robin/Documents/Cours/BE-Graphes/tests_performance/output_detaillee.csv", true);
             List<String> liste = Arrays.asList(new String[] {
                                 nom,
                                 data.getGraph().getMapName(),
@@ -45,7 +47,9 @@ public abstract class ShortestPathAlgorithm extends AbstractAlgorithm<ShortestPa
                                 String.valueOf(resultat.nb_noeuds_explores),
                                 String.valueOf(resultat.nb_noeuds_marques),
                                 String.valueOf(resultat.taille_max_tas),
-                                String.valueOf(resultat.distance_vol_oiseau)
+                                String.valueOf(resultat.distance_vol_oiseau),
+                                String.valueOf(resultat.distance_max_marque),
+                                String.valueOf(resultat.distance_max_explo)
 
             });
             String ligne = String.join(",", liste);

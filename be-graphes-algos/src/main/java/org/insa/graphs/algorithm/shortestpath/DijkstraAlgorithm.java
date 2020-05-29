@@ -87,6 +87,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	}
 			x.marquer();
 			resultat.nb_noeuds_marques++;
+			double distance_dest = Math.min(x.getCurrentNode().getPoint().distanceTo(data.getDestination().getPoint()),
+									 		x.getCurrentNode().getPoint().distanceTo(data.getOrigin().getPoint()));
+			resultat.distance_max_marque = resultat.distance_max_marque > distance_dest ? resultat.distance_max_marque : distance_dest;
 			resultat.taille_max_tas = Math.max(tas.getCurrentSize(),resultat.taille_max_tas);
         	notifyNodeMarked(x.getCurrentNode());
         	try
@@ -110,6 +113,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
                 if (Double.isInfinite(oldDistance) && Double.isFinite(newDistance)) {
 					notifyNodeReached(arc.getDestination());
 					resultat.nb_noeuds_explores++;
+					distance_dest = Math.min(x.getCurrentNode().getPoint().distanceTo(data.getDestination().getPoint()),
+											 x.getCurrentNode().getPoint().distanceTo(data.getOrigin().getPoint()));
+	    			resultat.distance_max_explo = resultat.distance_max_explo > distance_dest ? resultat.distance_max_explo : distance_dest;
 					moy_crte.incr_num();
 					nb++;
                 }

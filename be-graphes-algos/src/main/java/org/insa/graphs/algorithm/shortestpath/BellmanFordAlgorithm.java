@@ -61,6 +61,9 @@ public class BellmanFordAlgorithm extends ShortestPathAlgorithm {
                     if (Double.isInfinite(oldDistance) && Double.isFinite(newDistance)) {
                         notifyNodeReached(arc.getDestination());
                         resultat.nb_noeuds_explores++;
+                        double distance_dest = Math.min(arc.getDestination().getPoint().distanceTo(data.getDestination().getPoint()),
+                                                        arc.getDestination().getPoint().distanceTo(data.getOrigin().getPoint()));
+			            resultat.distance_max_marque = resultat.distance_max_marque > distance_dest ? resultat.distance_max_marque : distance_dest;
                     }
 
                     // Check if new distances would be better, if so update...

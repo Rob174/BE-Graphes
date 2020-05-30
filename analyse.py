@@ -27,17 +27,17 @@ converters = {"nom_algo":(lambda x:str(x)),
             "distance_max_marque":(lambda x:np.float(x)),
             "distance_max_explo":(lambda x:np.float(x))
             }
-df = pd.DataFrame(columns=list(converters.keys()))
 
 #Met les données en RAM
-pd.read_csv("/home/robin/Documents/Cours/BE-Graphes/tests_performance/output_detaillee.csv",
-            sep=",",names=converters.values(),
+df = pd.read_csv("/home/robin/Documents/Cours/BE-Graphes/tests_performance/output_detaillee.csv",
+            sep=",",names=converters.keys(),
             converters=converters)
 df = df.drop(df[df["nom_algo"]=="bellmanFord"].index)
 df = df.drop(df[df["mode"]=="temps"].index)
 df = df.drop("mode",axis=1)
-df = df.apply(lambda x:x[8]/float(x[7])*100,axis=1,result_type="expand")
+df["pourcentage_marque"] = np.float32(df["nb_noeuds_marques"]/np.array(df["nb_noeuds_explores"],dtype=np.float32)*100)
 print(list(df.columns.values))
+print(df.describe())
 # for carte in ["INSA","Haute-Garonne","Guadeloupe",None]:
 #     df_tmp = None
 #     if carte != None:

@@ -843,7 +843,8 @@ public class MainWindow extends JFrame {
 
     public static void main(final String[] args) {
     	//TestsPerformances.parse_input();
-        //TestsPerformances.process_random();
+    	/*for(int i=0; i<2; i++)
+    		TestsPerformances.process_random();*/
         // Try to set system look and feel.
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

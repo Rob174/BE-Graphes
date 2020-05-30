@@ -1,39 +1,47 @@
 import pandas as pd
 import plotly.express as px
+import numpy as np
 
-colonnes = ["nom_algo","carte","mode","origine","destination","cout","temps_calc","nb_noeuds_explores","nb_noeuds_marques","taille_max_tas","distance","distance_max_marque","distance_max_explo"]
-df = pd.DataFrame(columns=colonnes)
+colonnes = {"nom_algo":(lambda x:str(x)),
+            "carte":(lambda x:str(x)),
+            "mode":(lambda x:str(x)),
+            "origine":(lambda x:np.int(x)),
+            "destination":(lambda x:np.int(x)),
+            "cout":(lambda x:np.float(x)),
+            "temps_calc":(lambda x:float(np.int(int(x)*1e-6))),
+            "nb_noeuds_explores":(lambda x:np.int(x)),
+            "nb_noeuds_marques":(lambda x:np.int(x)),
+            "taille_max_tas":(lambda x:np.int(x)),
+            "distance":(lambda x:np.float(x)),
+            "distance_max_marque":(lambda x:np.float(x)),
+            "distance_max_explo":(lambda x:np.float(x))
+            }
+df = pd.DataFrame(columns=list(colonnes.keys()))
 
 #Met les données en RAM
 with open("/home/robin/Documents/Cours/BE-Graphes/tests_performance/output_detaillee.csv","r") as f:
     tests = f.readlines()
 for i,test in enumerate(tests):
-    df.loc[i] = test.strip().split(",")
+    df.loc[i] = [f(x) for x,f in zip(test.strip().split(","),colonnes.values())]
 df = df.drop(df[df["nom_algo"]=="bellmanFord"].index)
 df = df.drop(df[df["mode"]=="temps"].index)
 df = df.drop("mode",axis=1)
-df = df.loc[df["carte"]=="INSA"]
-df["temps_calc"]=df["temps_calc"].apply(lambda x:int(x))
-df["distance_max_marque"]=df["distance_max_marque"].apply(lambda x:float(x))
-df["distance_max_explo"]=df["distance_max_explo"].apply(lambda x:float(x))
-print(df.columns.values)
-df = df.apply(lambda x: (x[0],x[1],x[2],x[3],x[4],(int(x[6])-int(x[7]))/float(int(x[6]))), result_type='expand',axis=1)
-df.columns = ["nom_algo","carte","origine","destination","cout","diff_explores_marques"]
-# df_traj = df.copy()
-# df_traj['Trajet'] = df_traj[['carte', 'origine', "destination"]].agg('-'.join, axis=1)
-# df_traj = df_traj.drop(["carte","origine","destination"],axis=1)
-df_dij = df.loc[df["nom_algo"]=="dijikstra"]
-df_star = df.loc[df["nom_algo"]=="astar"]
-# df_comp = df_dij.merge(df_star,on="Trajet")
-# print(df_comp.columns.values)
-# df_comp = df_comp.apply(lambda x: (x[0],x[1],int(x[2])-int(x[11])), result_type='expand',axis=1)
-# df_comp.columns = ["Trajet","cout","Difference_nb_explorés"]
-dij_desc = df_dij.describe()
-astar_desc = df_star.describe()
-fig = px.scatter(df,x="cout",
-                    y="diff_explores_marques",
-                    title="AStar : moyenne %f ; ecart type : %f<br>Dijkstra : moyenne : %f ; ecart type : %f"%(astar_desc.loc["mean"],astar_desc.loc["std"],dij_desc.loc["mean"],dij_desc.loc["std"]),
-                    color="nom_algo",
-                    hover_name="carte",
-                    hover_data=["origine","destination"])
-fig.show()
+for valeur in ["nb_noeuds_explores","nb_noeuds_marques","distance_max_marque","distance_max_explo","taille_max_tas"]:
+    for carte in ["INSA","Haute-Garonne","Guadeloupe",None]:
+        df_tmp = None
+        if carte != None:
+            df_tmp = df.loc[df["carte"]==carte]
+        fig = px.scatter(df_tmp if carte != None else df,x="cout",
+                            y=valeur,
+                            title="Comparaison Astar Dijkstra %s"%("carte "+carte if carte != None else "toutes cartes"),
+                            color="nom_algo",
+                            hover_name="carte",
+                            hover_data=[
+                                "origine",
+                                "destination",
+                                "cout",
+                                valeur,
+                                "temps_calc"
+                            ],
+                            size="temps_calc")
+        fig.write_html("/home/robin/Documents/Cours/BE-Graphes/tests_performance/analyse_output_detaillee/%s_%s.html"%(carte if carte != None else "toutes_cartes",valeur))

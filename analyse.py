@@ -1,8 +1,19 @@
 import pandas as pd
 import plotly.express as px
 import numpy as np
+import sys
 
-colonnes = {"nom_algo":(lambda x:str(x)),
+# Barre de progression d'après https://gist.github.com/vladignatyev/06860ec2040cb497f0f3
+def progress(count, total, status=''):
+    bar_len = 60
+    filled_len = int(round(bar_len * count / float(total)))
+
+    percents = round(100.0 * count / float(total), 1)
+    bar = '=' * filled_len + '-' * (bar_len - filled_len)
+
+    sys.stdout.write('[%s] %s%s ...%s\r' % (bar, percents, '%', status))
+    sys.stdout.flush()
+converters = {"nom_algo":(lambda x:str(x)),
             "carte":(lambda x:str(x)),
             "mode":(lambda x:str(x)),
             "origine":(lambda x:np.int(x)),
@@ -16,32 +27,32 @@ colonnes = {"nom_algo":(lambda x:str(x)),
             "distance_max_marque":(lambda x:np.float(x)),
             "distance_max_explo":(lambda x:np.float(x))
             }
-df = pd.DataFrame(columns=list(colonnes.keys()))
+df = pd.DataFrame(columns=list(converters.keys()))
 
 #Met les données en RAM
-with open("/home/robin/Documents/Cours/BE-Graphes/tests_performance/output_detaillee.csv","r") as f:
-    tests = f.readlines()
-for i,test in enumerate(tests):
-    df.loc[i] = [f(x) for x,f in zip(test.strip().split(","),colonnes.values())]
+pd.read_csv("/home/robin/Documents/Cours/BE-Graphes/tests_performance/output_detaillee.csv",
+            sep=",",names=converters.values(),
+            converters=converters)
 df = df.drop(df[df["nom_algo"]=="bellmanFord"].index)
 df = df.drop(df[df["mode"]=="temps"].index)
 df = df.drop("mode",axis=1)
-for valeur in ["nb_noeuds_explores","nb_noeuds_marques","distance_max_marque","distance_max_explo","taille_max_tas"]:
-    for carte in ["INSA","Haute-Garonne","Guadeloupe",None]:
-        df_tmp = None
-        if carte != None:
-            df_tmp = df.loc[df["carte"]==carte]
-        fig = px.scatter(df_tmp if carte != None else df,x="cout",
-                            y=valeur,
-                            title="Comparaison Astar Dijkstra %s"%("carte "+carte if carte != None else "toutes cartes"),
-                            color="nom_algo",
-                            hover_name="carte",
-                            hover_data=[
-                                "origine",
-                                "destination",
-                                "cout",
-                                valeur,
-                                "temps_calc"
-                            ],
-                            size="temps_calc")
-        fig.write_html("/home/robin/Documents/Cours/BE-Graphes/tests_performance/analyse_output_detaillee/%s_%s.html"%(carte if carte != None else "toutes_cartes",valeur))
+df = df.apply(lambda x:x[8]/float(x[7])*100,axis=1,result_type="expand")
+print(list(df.columns.values))
+# for carte in ["INSA","Haute-Garonne","Guadeloupe",None]:
+#     df_tmp = None
+#     if carte != None:
+#         df_tmp = df.loc[df["carte"]==carte]
+#     fig = px.scatter(df_tmp if carte != None else df,x="cout",
+#                         y=valeur,
+#                         title="Comparaison Astar Dijkstra %s"%("carte "+carte if carte != None else "toutes cartes"),
+#                         color="nom_algo",
+#                         hover_name="carte",
+#                         hover_data=[
+#                             "origine",
+#                             "destination",
+#                             "cout",
+#                             valeur,
+#                             "temps_calc"
+#                         ],
+#                         size="temps_calc")
+#     fig.write_html("/home/robin/Documents/Cours/BE-Graphes/tests_performance/analyse_output_detaillee/%s_%s.html"%(carte if carte != None else "toutes_cartes",valeur))

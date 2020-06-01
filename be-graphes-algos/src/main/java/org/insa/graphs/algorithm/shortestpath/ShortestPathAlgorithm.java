@@ -32,7 +32,10 @@ public abstract class ShortestPathAlgorithm extends AbstractAlgorithm<ShortestPa
     protected ShortestPathAlgorithm(ShortestPathData data) {
         super(data);
     }
-
+    /**
+     * Ecrit les résultats des chemins trouvés dans un fichier pour les tests de performance
+     * @param data, donnees du chemin
+     */
     void write_results(ShortestPathData data) {
         try {
             FileWriter writer = new FileWriter("/home/robin/Documents/Cours/BE-Graphes/tests_performance/output_detaillee.csv", true);

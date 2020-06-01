@@ -33,26 +33,27 @@ df = pd.read_csv("/home/robin/Documents/Cours/BE-Graphes/tests_performance/outpu
             sep=",",names=converters.keys(),
             converters=converters)
 df = df.drop(df[df["nom_algo"]=="bellmanFord"].index)
-df = df.drop(df[df["mode"]=="temps"].index)
+df = df.drop(df[df["mode"]=="longueur"].index)
 df = df.drop("mode",axis=1)
 df["pourcentage_marque"] = np.float32(df["nb_noeuds_marques"]/np.array(df["nb_noeuds_explores"],dtype=np.float32)*100)
 print(list(df.columns.values))
-print(df.describe())
-# for carte in ["INSA","Haute-Garonne","Guadeloupe",None]:
-#     df_tmp = None
-#     if carte != None:
-#         df_tmp = df.loc[df["carte"]==carte]
-#     fig = px.scatter(df_tmp if carte != None else df,x="cout",
-#                         y=valeur,
-#                         title="Comparaison Astar Dijkstra %s"%("carte "+carte if carte != None else "toutes cartes"),
-#                         color="nom_algo",
-#                         hover_name="carte",
-#                         hover_data=[
-#                             "origine",
-#                             "destination",
-#                             "cout",
-#                             valeur,
-#                             "temps_calc"
-#                         ],
-#                         size="temps_calc")
-#     fig.write_html("/home/robin/Documents/Cours/BE-Graphes/tests_performance/analyse_output_detaillee/%s_%s.html"%(carte if carte != None else "toutes_cartes",valeur))
+print(df.head())
+for valeur in ["nb_noeuds_explores","nb_noeuds_marques","pourcentage_marque","taille_max_tas","distance","distance_max_marque","distance_max_explo"]:
+    for carte in ["INSA","Haute-Garonne","Guadeloupe",None]:
+        df_tmp = None
+        if carte != None:
+            df_tmp = df.loc[df["carte"]==carte]
+        fig = px.scatter(df_tmp if carte != None else df,x="cout",
+                            y=valeur,
+                            title="Comparaison Astar Dijkstra %s"%("carte "+carte if carte != None else "toutes cartes"),
+                            color="nom_algo",
+                            hover_name="carte",
+                            hover_data={
+                                "origine":":d",
+                                "destination":":d",
+                                "cout":":.2f",
+                                valeur:":.2f",
+                                "temps_calc":":d"
+                            },
+                            size="temps_calc")
+        fig.write_html("/home/robin/Documents/Cours/BE-Graphes/tests_performance/analyse_output_detaillee/temps_%s_%s.html"%(carte if carte != None else "toutes_cartes",valeur))

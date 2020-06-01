@@ -842,7 +842,7 @@ public class MainWindow extends JFrame {
     }
 
     public static void main(final String[] args) {
-    	//TestsPerformances.parse_input();
+        //Tests de performances à décommenter si on veut les effectuer
     	/*for(int i=0; i<2; i++)
     		TestsPerformances.process_random();*/
         // Try to set system look and feel.

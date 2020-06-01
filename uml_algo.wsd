@@ -1,8 +1,5 @@
 @startuml
 package "algorithm" {
-    class AbstractAlgorithm<Observer>{
-
-    }
     together {
         interface ArcInspector {
             **double** getCost​(Arc);
@@ -10,7 +7,7 @@ package "algorithm" {
             **AbstractInputData.Mode** getMode();
             **boolean** isAllowed​(Arc);
         }
-        note top of ArcInspector: which arcs can be used\nthe costs of the usable arcs
+        
         ArcInspector ..> AbstractInputData
         class AbstractInputData {
             **AbstractSolution** run();
@@ -26,11 +23,6 @@ package "algorithm" {
     note right: AbstractSolution.Status : \nFEASIBLE ; INFEASIBLE ;\nOPTIMAL ; UNKNOWN
     
     AbstractInputData <.. AbstractSolution
-    class AlgorithmFactory {
-        
-    }
-    AlgorithmFactory ..> AbstractInputData
-    AbstractAlgorithm <.. AlgorithmFactory
     package algorithm.shortestpath {
         interface ShortestPathObserver {
             **void** notifyDestinationReached(Node destination);
@@ -58,15 +50,14 @@ package "algorithm" {
             } 	
         }
         DijkstraAlgorithm <|-- AStarAlgorithm
-        AStarAlgorithm --> ShortestPathData
+        DijkstraAlgorithm ..> ShortestPathSolution
+        BellmanFordAlgorithm ..> ShortestPathSolution
+        ShortestPathAlgorithm "1..*" --> "1" ShortestPathData
         	 
         ShortestPathAlgorithm <|-- BellmanFordAlgorithm
-        BellmanFordAlgorithm --> ShortestPathData
-         	 
-        ShortestPathAlgorithm <|-- DijkstraAlgorithm
-        DijkstraAlgorithm --> ShortestPathData 
-        AbstractAlgorithm <|-- ShortestPathAlgorithm
-        ShortestPathAlgorithm --> ShortestPathObserver
+        ShortestPathAlgorithm  <|--  DijkstraAlgorithm
+        
+        ShortestPathAlgorithm "1" --> "*" ShortestPathObserver
         class ShortestPathData {
             **Node** getDestination()
             **Node** getOrigin() 	 
@@ -79,7 +70,7 @@ package "algorithm" {
             **Path** getPath()
         } 	 
         ShortestPathSolution --|> AbstractSolution
-        ShortestPathSolution --> ShortestPathData
+        ShortestPathSolution "1..*" --> "1" ShortestPathData
         class ShortestPathTextObserver {
             **void** notifyDestinationReached​(Node node) 	
             **void** notifyNodeMarked​(Node node) 	

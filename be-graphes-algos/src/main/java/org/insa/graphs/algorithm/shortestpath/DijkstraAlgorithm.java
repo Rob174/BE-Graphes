@@ -69,10 +69,6 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         labels[data.getOrigin().getId()].setCost(0);
         tas.insert(labels[data.getOrigin().getId()]);
 		this.notifyOriginProcessed(data.getOrigin());
-		long nb_moyen_parc = 0;
-		Fraction tmp_num = new Fraction((long)0,(long)1);
-		long nb_noeuds_tot = data.getGraph().size();
-		long nb = 0;
 		boolean arret = false;
         while (labels[data.getDestination().getId()].estMarque() == false && arret == false) {
         	Label x;
@@ -87,6 +83,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	}
 			x.marquer();
 			resultat.nb_noeuds_marques++;
+			//Elements pour les tests de performance
 			double distance_dest = Math.min(x.getCurrentNode().getPoint().distanceTo(data.getDestination().getPoint()),
 									 		x.getCurrentNode().getPoint().distanceTo(data.getOrigin().getPoint()));
 			resultat.distance_max_marque = resultat.distance_max_marque > distance_dest ? resultat.distance_max_marque : distance_dest;
@@ -101,7 +98,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	{
         		//System.out.println("Cet élément n'existe pas");
 			}
-			Fraction moy_crte = new Fraction((long)0,(long)(x.getCurrentNode().getSuccessors().size()));
+			
         	for (Arc arc : x.getCurrentNode().getSuccessors()) {
         		Label successeur = labels[arc.getDestination().getId()];
         		double precCout = successeur.getTotalCost();
@@ -116,33 +113,29 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 					distance_dest = Math.min(x.getCurrentNode().getPoint().distanceTo(data.getDestination().getPoint()),
 											 x.getCurrentNode().getPoint().distanceTo(data.getOrigin().getPoint()));
 	    			resultat.distance_max_explo = resultat.distance_max_explo > distance_dest ? resultat.distance_max_explo : distance_dest;
-					moy_crte.incr_num();
-					nb++;
+					
                 }
 				if(data.isAllowed(arc)==true && successeur.estMarque()==false &&  oldDistance > newDistance) {
-		        	
+		        	//si le successeur est accessible et non marqué
 					successeur.setCost(x.getCost()+w);
 					successeur.setFather(arc);
 					if(precCout != Double.POSITIVE_INFINITY) {
+						//Si on avait déjà exploré le noeud, on actualise le Label du tas
 						tas.remove(successeur);
 						tas.insert(successeur);
 						//tas.isValid();
 						
 					}
 					else {
+						//Sinon on l'insert
 						tas.insert(successeur);
 						//tas.isValid();
 					}
 				}
 			}
-        	if(moy_crte.get_denom()!=0)
-			{
-        		tmp_num.add(moy_crte);
-    		}
         	if(labels[data.getDestination().getId()].estMarque() == true) {
                 notifyNodeReached(x.getFather().getDestination());
 			}
-			nb_moyen_parc++;
 		}
 		resultat.temps_calcul = System.nanoTime()-debut;
         // Destination has no predecessor, the solution is infeasible...
@@ -151,9 +144,6 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         }
         else {
 
-            double res = tmp_num.calcul()/(double)(nb_moyen_parc);
-    		//System.out.println("Total en moy "+res+" prct");
-    		//System.out.println("Total du total "+((double)(nb)/(double)(nb_noeuds_tot))+" prct");
             // The destination has been found, notify the observers.
             notifyDestinationReached(data.getDestination());
 			resultat.cout = labels[data.getDestination().getId()].getCost();
